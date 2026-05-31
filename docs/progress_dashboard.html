@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南方电网电价预测与储能优化进度仪表盘</title>
+    <!-- Google Fonts Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --surface-color: rgba(255, 255, 255, 0.03);
+            --surface-border: rgba(255, 255, 255, 0.07);
+            --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --text-main: #f5f6fa;
+            --text-muted: #8f9cae;
+            --accent-cyan: #00f2fe;
+            --accent-violet: #a18cd1;
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1b1c2b 0%, var(--bg-color) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem;
+            overflow-x: hidden;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0e15;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Header Area */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .logo-area h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-cyan);
+            border-radius: 50%;
+            position: relative;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 242, 254, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 242, 254, 0);
+            }
+        }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Metric Card */
+        .metric-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            transition: background 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .metric-card.primary:hover::before { background: var(--primary-gradient); }
+        .metric-card.secondary:hover::before { background: var(--secondary-gradient); }
+        .metric-card.accent:hover::before { background: var(--accent-gradient); }
+        .metric-card.warning:hover::before { background: var(--accent-orange); }
+
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .highlight-cyan { color: var(--accent-cyan); }
+        .highlight-violet { color: var(--accent-violet); }
+        .highlight-orange { color: var(--accent-orange); }
+        .highlight-green { color: var(--accent-green); }
+
+        /* Main Section: Pipeline & Figures Split */
+        .content-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .panel {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .panel-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        /* SVG Data Pipeline Pipeline Flow */
+        .pipeline-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+
+        .pipeline-svg {
+            width: 100%;
+            min-width: 600px;
+            height: 120px;
+        }
+
+        .flow-path {
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .flow-path-active {
+            stroke: var(--accent-cyan);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 8, 8;
+            animation: dash 30s linear infinite;
+        }
+
+        .flow-path-inactive {
+            stroke: var(--text-muted);
+            stroke-width: 2;
+            fill: none;
+            stroke-dasharray: 4, 4;
+            opacity: 0.4;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -1000;
+            }
+        }
+
+        .node-rect {
+            fill: #161722;
+            stroke: var(--surface-border);
+            stroke-width: 1.5;
+            rx: 10px;
+            transition: all 0.3s;
+        }
+
+        .node-rect.completed {
+            stroke: var(--accent-cyan);
+            fill: rgba(0, 242, 254, 0.03);
+        }
+
+        .node-rect.inactive {
+            stroke: rgba(255, 255, 255, 0.05);
+            opacity: 0.6;
+        }
+
+        .node-text {
+            fill: var(--text-main);
+            font-size: 11px;
+            font-weight: 500;
+            text-anchor: middle;
+        }
+
+        .node-subtext {
+            fill: var(--text-muted);
+            font-size: 9px;
+            text-anchor: middle;
+        }
+
+        /* Checklist / Progress Tracker */
+        .milestones-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 0.8rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .milestone-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: var(--surface-border);
+        }
+
+        .m-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .m-icon.done {
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--accent-green);
+        }
+
+        .m-icon.progress {
+            background: rgba(255, 145, 0, 0.15);
+            color: var(--accent-orange);
+            animation: pulse-orange 1.5s infinite;
+        }
+
+        .m-icon.todo {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        @keyframes pulse-orange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 145, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0); }
+        }
+
+        .m-info h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .m-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Diagnostic Figures Grid */
+        .figures-section {
+            margin-bottom: 3rem;
+        }
+
+        .figures-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .figure-card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .figure-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .figure-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--surface-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        .figure-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .figure-badge {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.3rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .img-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: #13131f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .figure-card:hover .img-container img {
+            transform: scale(1.03);
+        }
+
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 14, 21, 0.8);
+            opacity: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            backdrop-filter: blur(4px);
+        }
+
+        .img-container:hover .img-overlay {
+            opacity: 1;
+        }
+
+        .figure-footer {
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.01);
+            border-top: 1px solid var(--surface-border);
+        }
+
+        .figure-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        /* Footer Call to Action */
+        footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-border);
+        }
+
+        .cta-btn {
+            background: var(--primary-gradient);
+            color: #0b0c10;
+            border: none;
+            padding: 0.8rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 22px rgba(0, 242, 254, 0.5);
+        }
+
+        .cta-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Fullscreen Lightbox Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(11, 12, 16, 0.95);
+            backdrop-filter: blur(10px);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content-wrapper {
+            position: relative;
+            max-width: 85%;
+            max-height: 85%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #141521;
+            border: 1px solid var(--surface-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-img {
+            max-width: 100%;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #0d0e15;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .modal-info {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .modal-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -1.5rem;
+            right: -1.5rem;
+            width: 36px;
+            height: 36px;
+            background: #ff576c;
+            border: none;
+            border-radius: 50%;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .content-layout {
+                grid-template-columns: 1fr;
+            }
+            body {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .figures-grid {
+                grid-template-columns: 1fr;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Block -->
+    <header>
+        <div class="logo-area">
+            <h1>南方电网电价预测与储能优化</h1>
+            <p>实时节点电价 LightGBM 预测与电池充放电决策决策中心</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            <span>基线模型已就绪 (Baseline Running)</span>
+        </div>
+    </header>
+
+    <!-- Metrics Row -->
+    <div class="dashboard-grid">
+        <div class="metric-card primary">
+            <div class="metric-title">验证集最低 RMSE</div>
+            <div class="metric-value highlight-cyan">0.576346</div>
+            <div class="metric-desc">本地 80/20 时间切分验证集评估均方根误差</div>
+        </div>
+        <div class="metric-card secondary">
+            <div class="metric-title">验证集最低 MAE</div>
+            <div class="metric-value highlight-violet">0.418636</div>
+            <div class="metric-desc">本地平均绝对误差（电价绝对价格偏差）</div>
+        </div>
+        <div class="metric-card warning">
+            <div class="metric-title">储能盈利状态</div>
+            <div class="metric-value highlight-orange">暂无收益</div>
+            <div class="metric-desc">充放电功率 `power` 暂未投入优化（填充为0.0）</div>
+        </div>
+        <div class="metric-card accent">
+            <div class="metric-title">可用天气网格数据</div>
+            <div class="metric-value highlight-green">425 天</div>
+            <div class="metric-desc">`all_nc` 目录下包含 425 个三维格点天气 NC 文件</div>
+        </div>
+    </div>
+
+    <!-- Core Pipeline & Milestones Split -->
+    <div class="content-layout">
+        <!-- Pipeline Diagram Panel -->
+        <div class="panel">
+            <div class="panel-title">项目数据流向与决策架构</div>
+            <div class="pipeline-wrapper">
+                <svg class="pipeline-svg" viewBox="0 0 740 120">
+                    <!-- Path Connections -->
+                    <path d="M 90,60 L 220,60" class="flow-path-active"></path>
+                    <path d="M 220,60 L 350,60" class="flow-path-active"></path>
+                    <path d="M 350,60 L 480,60" class="flow-path-active"></path>
+                    <path d="M 480,60 L 610,60" class="flow-path-inactive"></path>
+                    
+                    <!-- Node 1: Raw Data -->
+                    <g transform="translate(10, 20)">
+                        <rect class="node-rect completed" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text">电网边界条件</text>
+                        <text x="50" y="54" class="node-subtext">负荷、新能源预测</text>
+                        <text x="50" y="66" class="node-subtext">`mengxi_boundary.csv`</text>
+                    </g>
+                    
+                    <!-- Node 2: Merging & Time -->
+                    <g transform="translate(140, 20)">
+                        <rect class="node-rect completed" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text">特征提取与对齐</text>
+                        <text x="50" y="54" class="node-subtext">时间戳内连接</text>
+                        <text x="50" y="66" class="node-subtext">小时/星期几周期特征</text>
+                    </g>
+                    
+                    <!-- Node 3: LightGBM -->
+                    <g transform="translate(270, 20)">
+                        <rect class="node-rect completed" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text">LightGBM 基线</text>
+                        <text x="50" y="54" class="node-subtext">时间顺序训练切分</text>
+                        <text x="50" y="66" class="node-subtext">RMSE 早期停止收敛</text>
+                    </g>
+                    
+                    <!-- Node 4: Predicted Prices -->
+                    <g transform="translate(400, 20)">
+                        <rect class="node-rect completed" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text">15分钟预测电价</text>
+                        <text x="50" y="54" class="node-subtext">输出 `实时价格` 序列</text>
+                        <text x="50" y="66" class="node-subtext">RMSE: 0.5763</text>
+                    </g>
+                    
+                    <!-- Node 5: Storage Strategy (Bottleneck) -->
+                    <g transform="translate(530, 20)">
+                        <rect class="node-rect inactive" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text" style="fill: var(--text-muted);">储能套利优化</text>
+                        <text x="50" y="54" class="node-subtext">待规划 (MIP/DP/贪心)</text>
+                        <text x="50" y="66" class="node-subtext">计算 `power` 充放电</text>
+                    </g>
+                    
+                    <!-- Node 6: Submit Format -->
+                    <g transform="translate(660, 20)">
+                        <rect class="node-rect inactive" width="100" height="80"></rect>
+                        <text x="50" y="38" class="node-text" style="fill: var(--text-muted);">标准输出提交</text>
+                        <text x="50" y="54" class="node-subtext">对齐 `output_demo`</text>
+                        <text x="50" y="66" class="node-subtext">5664行 × 3列</text>
+                    </g>
+                </svg>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                数据流从左侧的<b>电网边界特征</b>输入，经过时间戳多路对齐和 LightGBM 模型预测，目前成功输出<b>15分钟预测实时价格</b>。虚线箭头表示下一个核心任务：根据预测电价求解<b>储能充放电决策 (Power)</b> 并拼装成最终的提交结果。
+            </p>
+        </div>
+
+        <!-- Milestones Tracker Panel -->
+        <div class="panel">
+            <div class="panel-title">开发路线图与当前进度</div>
+            <div class="milestones-list">
+                <div class="milestone-item">
+                    <div class="m-icon done">✓</div>
+                    <div class="m-info">
+                        <h4>第1阶段：数据清洗与内连接对齐</h4>
+                        <p>完成时序特征工程（提取hour, dayofweek等周期指标）</p>
+                    </div>
+                </div>
+                <div class="milestone-item">
+                    <div class="m-icon done">✓</div>
+                    <div class="m-info">
+                        <h4>第2阶段：LightGBM 基线电价预测</h4>
+                        <p>本地测试 RMSE: 0.5763 / MAE: 0.4186，完成快速收敛训练</p>
+                    </div>
+                </div>
+                <div class="milestone-item">
+                    <div class="m-info" style="display: flex; gap: 1rem; width: 100%;">
+                        <div class="m-icon progress">▶</div>
+                        <div style="flex-grow: 1;">
+                            <h4>第3阶段：储能充放电策略开发</h4>
+                            <p>设计基于电池最大充放电率和容量约束的贪心套利或线性规划算法</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="milestone-item">
+                    <div class="m-icon todo">○</div>
+                    <div class="m-info">
+                        <h4>第4阶段：NC 气象高阶特征工程</h4>
+                        <p>解析三维网格格点天气预报数据，纠正边界条件新能源预测偏差</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diagnostic Figures Section -->
+    <div class="figures-section">
+        <h3 class="panel-title" style="margin-left: 0.5rem; margin-bottom: 2rem;">本地基线模型评估与校验视图</h3>
+        
+        <div class="figures-grid">
+            <!-- Fig 1 -->
+            <div class="figure-card">
+                <div class="figure-header">
+                    <span class="figure-title">图1：预测值分布特征</span>
+                    <span class="figure-badge">特征检验</span>
+                </div>
+                <div class="img-container" onclick="openLightbox('../outputs/figures/fig1_prediction_distribution.png', '图1：预测值分布特征 (Prediction Distribution)', '对比验证集真实值分布与测试集预测值分布。用以校验预测范围是否合理。目前预测主要集中在 [0.2, 0.8] 元区间，测试集预测分布没有出现异常飘逸。')">
+                    <img src="../outputs/figures/fig1_prediction_distribution.png" alt="预测值分布图">
+                    <div class="img-overlay">🔍 点击查看高清详析</div>
+                </div>
+                <div class="figure-footer">
+                    <p class="figure-desc">对比评估真实与预测价格分布特征，确保测试集预测趋势合理且无严重离群值。</p>
+                </div>
+            </div>
+            
+            <!-- Fig 2 -->
+            <div class="figure-card">
+                <div class="figure-header">
+                    <span class="figure-title">图2：时序波动拟合曲线 (前3周)</span>
+                    <span class="figure-badge">时序拟合</span>
+                </div>
+                <div class="img-container" onclick="openLightbox('../outputs/figures/fig2_true_vs_predicted.png', '图2：时序波动拟合曲线 (True vs Predicted)', '展示验证集前3周内 15 分钟间隔的真实电价与 LightGBM 预测电价。可以观察到模型能够极好地拟合大部分波谷与常规波动，但由于缺乏历史滞后特征，在面对电力市场瞬间极端电价尖峰时往往会发生一定程度的低估。')">
+                    <img src="../outputs/figures/fig2_true_vs_predicted.png" alt="时序波动曲线">
+                    <div class="img-overlay">🔍 点击查看高清详析</div>
+                </div>
+                <div class="figure-footer">
+                    <p class="figure-desc">直观展现模型对电价峰谷波动的捕捉程度。发现当前基线对<b>“瞬间极端高电价尖峰”</b>存在低估倾向。</p>
+                </div>
+            </div>
+            
+            <!-- Fig 3 -->
+            <div class="figure-card">
+                <div class="figure-header">
+                    <span class="figure-title">图3：滚动误差时空波动</span>
+                    <span class="figure-badge">时变稳定性</span>
+                </div>
+                <div class="img-container" onclick="openLightbox('../outputs/figures/fig3_error_over_time.png', '图3：滚动误差时空波动 (Error Over Time)', '上图展示了具体的预测误差时变起伏（粉红色为实际误差，橙色/蓝色填充代表高估与低估偏差）；下图展示了以 1 天（96 个时间点）为滚动窗口的 MAE 与 RMSE 移动趋势。有助于发现模型在特定几天的性能衰退。')">
+                    <img src="../outputs/figures/fig3_error_over_time.png" alt="滚动误差图">
+                    <div class="img-overlay">🔍 点击查看高清详析</div>
+                </div>
+                <div class="figure-footer">
+                    <p class="figure-desc">展示日滚动的预测 RMSE 与 MAE 趋势，量化预测性能随日历时间推移是否具备平稳稳定性。</p>
+                </div>
+            </div>
+            
+            <!-- Fig 4 -->
+            <div class="figure-card">
+                <div class="figure-header">
+                    <span class="figure-title">图4：24小时分时预测误差统计</span>
+                    <span class="figure-badge">小时分析</span>
+                </div>
+                <div class="img-container" onclick="openLightbox('../outputs/figures/fig4_hourly_mae_rmse.png', '图4：24小时分时预测误差统计 (Hourly MAE/RMSE)', '将验证集所有点的预测误差按照每日 24 小时进行分类统计。虚线为全局平均 MAE 和 RMSE。这有助于我们快速发现由于新能源大发或早晚用电负荷高峰造成的特定小时预测盲区。')">
+                    <img src="../outputs/figures/fig4_hourly_mae_rmse.png" alt="分时误差柱状图">
+                    <div class="img-overlay">🔍 点击查看高清详析</div>
+                </div>
+                <div class="figure-footer">
+                    <p class="figure-desc">按日内24小时细化分析 MAE 与 RMSE。揭示了电网在早高峰与晚高峰时段由于波动大导致误差增高的规律。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Call to Action -->
+    <footer>
+        <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 0.5rem; max-width: 1100px;">
+            <a href="project_overview.md" class="cta-btn" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-muted); box-shadow: none; padding: 0.6rem 1.2rem; font-size: 0.82rem;">📖 项目技术概述</a>
+            <a href="optimization_plan.md" class="cta-btn" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-muted); box-shadow: none; padding: 0.6rem 1.2rem; font-size: 0.82rem;">💡 算法提分指南</a>
+            <a href="next_steps_plan.md" class="cta-btn" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); color: var(--text-muted); box-shadow: none; padding: 0.6rem 1.2rem; font-size: 0.82rem;">🚀 下一步研发路线</a>
+            <a href="baseline_understanding.html" class="cta-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: #0b0c10; padding: 0.6rem 1.2rem; font-size: 0.82rem; box-shadow: 0 4px 15px rgba(56, 249, 215, 0.3);">🔍 基线深度技术说明书</a>
+            <a href="deep_research_plan.md" class="cta-btn" style="background: var(--primary-gradient); color: #0b0c10; padding: 0.6rem 1.2rem; font-size: 0.82rem;">🧠 Deep Research 终极蓝图</a>
+            <a href="autoresearch_benchmark_decision.md" class="cta-btn" style="background: var(--secondary-gradient); color: #f5f6fa; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4); padding: 0.6rem 1.2rem; font-size: 0.82rem;">📊 AutoResearch 评测决策方案</a>
+        </div>
+        <div class="cta-desc">想要深度剖析已有 Baseline 架构、物理边界限制与阶段一实验方案？请在工作区中查阅 <b>docs/baseline_understanding.html</b></div>
+    </footer>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div class="modal" id="lightbox">
+        <div class="modal-content-wrapper">
+            <button class="close-btn" onclick="closeLightbox()">×</button>
+            <img id="modalImg" class="modal-img" src="" alt="Zoomed Figure">
+            <div class="modal-info">
+                <h4 id="modalTitle" class="modal-title"></h4>
+                <p id="modalDesc" class="modal-desc"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal / Lightbox Control
+        const modal = document.getElementById('lightbox');
+        const modalImg = document.getElementById('modalImg');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDesc = document.getElementById('modalDesc');
+
+        function openLightbox(src, title, desc) {
+            modalImg.src = src;
+            modalTitle.innerText = title;
+            modalDesc.innerText = desc;
+            modal.classList.add('active');
+        }
+
+        function closeLightbox() {
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside content wrapper
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeLightbox();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>

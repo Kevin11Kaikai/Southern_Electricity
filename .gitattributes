@@ -1,0 +1,9 @@
+# Auto-detect text files and normalize
+* text=auto
+
+# Use Git LFS for NetCDF files (if you enable Git LFS locally)
+*.nc filter=lfs diff=lfs merge=lfs -text
+
+# Prevent exporting large data folders in generated archives
+outputs/** export-ignore
+to_sais_new/all_nc/** export-ignore

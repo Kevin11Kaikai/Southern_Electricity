@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>南方电网基线深度解析技术说明书</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --surface-color: rgba(255, 255, 255, 0.03);
+            --surface-border: rgba(255, 255, 255, 0.07);
+            --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --text-main: #f5f6fa;
+            --text-muted: #8f9cae;
+            --accent-cyan: #00f2fe;
+            --accent-violet: #a18cd1;
+            --accent-green: #00e676;
+            --accent-orange: #ff9100;
+            --accent-red: #ff5252;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #151624 0%, var(--bg-color) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2.5rem;
+            line-height: 1.6;
+        }
+
+        /* 统一滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0e15;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Navigation Links */
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--surface-border);
+            padding-bottom: 1.5rem;
+        }
+
+        .nav-back-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        .logo-area h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Content Sections */
+        .section-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        /* Grid layouts */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card-body {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+        }
+
+        /* Constraints Styles */
+        .constraint-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+        }
+
+        .c-phys { background: rgba(0, 242, 254, 0.1); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.2); }
+        .c-safe { background: rgba(161, 140, 209, 0.1); color: var(--accent-violet); border: 1px solid rgba(161, 140, 209, 0.2); }
+        .c-oper { background: rgba(0, 230, 118, 0.1); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.2); }
+
+        /* Failure Modes Visualizer */
+        .failure-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .failure-table th, .failure-table td {
+            padding: 1.2rem;
+            text-align: left;
+            border-bottom: 1px solid var(--surface-border);
+        }
+
+        .failure-table th {
+            background: rgba(0,0,0,0.3);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .failure-table td {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .failure-name {
+            font-weight: 600;
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detection-code {
+            font-family: monospace;
+            background: rgba(0,0,0,0.4);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: #ffb86c;
+        }
+
+        /* Boundary Split Panel */
+        .boundary-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .boundary-panel {
+            border-radius: 16px;
+            padding: 1.8rem;
+            backdrop-filter: blur(16px);
+        }
+
+        .bp-readonly {
+            background: rgba(255, 82, 82, 0.02);
+            border: 1px solid rgba(255, 82, 82, 0.2);
+        }
+
+        .bp-modify {
+            background: rgba(0, 230, 118, 0.02);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+
+        .bp-header {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .bp-header.ro { color: var(--accent-red); }
+        .bp-header.ma { color: var(--accent-green); }
+
+        .file-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .file-item {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--surface-border);
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .file-name {
+            font-family: monospace;
+            color: var(--text-main);
+        }
+
+        .file-desc {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Stage 1 Flowchart */
+        .stage-flow-svg {
+            width: 100%;
+            height: 140px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--surface-border);
+        }
+
+        .cta-btn {
+            background: var(--primary-gradient);
+            color: #0b0c10;
+            border: none;
+            padding: 0.7rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2);
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+        }
+
+        .cta-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            box-shadow: none;
+        }
+
+        .cta-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav Header -->
+    <header class="nav-header">
+        <div class="logo-area">
+            <h1>南方电网基线深度解析技术说明书</h1>
+            <p>系统化透视已有 Baseline 架构、物理边界限制与阶段一实验方案</p>
+        </div>
+        <div class="nav-back-links">
+            <a href="progress_dashboard.html" class="nav-link">🎛️ 可视化控制台</a>
+            <a href="project_overview.md" class="nav-link">📖 架构文档</a>
+            <a href="baseline_understanding.md" class="nav-link">📝 Markdown 说明书</a>
+        </div>
+    </header>
+
+    <!-- Section 1: Overview -->
+    <h3 class="section-title">基线核心工作与边界</h3>
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-header highlight-cyan">
+                <span>1. 电价预测核心</span>
+            </div>
+            <div class="card-body">
+                利用 <code>lgb_baseline.py</code> 基于日前系统负荷、风电/光伏/水电总出力预测及联络线功率，通过 LightGBM 拟合 RMSE 损失函数预测 15 分钟粒度实时价格。本地测得最优验证集 RMSE 为 0.5763。
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header highlight-violet">
+                <span>2. 储能优化空置</span>
+            </div>
+            <div class="card-body">
+                基线中的 <code>generate_strategy</code> 决策函数当前为空占位。在 <code>analyze_baseline.py</code> 中，储能充放电有功功率 <code>power</code> 被硬编码填充为全局常数 <code>0.0</code>，储能未进行实际调度，预期套利收益为零。
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header highlight-green">
+                <span>3. 优化目标现状</span>
+            </div>
+            <div class="card-body">
+                日前预测段以最小化时序均方误差（RMSE）为单一目标。储能控制段在未来的理想设计中应为最大化系统套利净收益，但目前在基线代码中完全缺失，属于下一步开发的突破口。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Constraints -->
+    <h3 class="section-title">强制物理安全边界 (BESS Limits)</h3>
+    <div class="grid-2">
+        <div class="card">
+            <div class="constraint-badge c-phys">物理守恒与安全范围</div>
+            <div class="card-header" style="margin-top: 0.3rem;">SOC 能量转移方程与边界</div>
+            <div class="card-body">
+                每个 15 分钟时刻结束时的储能电池荷电状态 $E_t$ 必须严格守恒：
+                <div style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; margin: 0.5rem 0; color: var(--accent-cyan);">
+                    E[t] = E[t-1] + P_c[t] * eff * dt - P_d[t] * dt / eff
+                </div>
+                其中决策时差步长 $dt = 0.25$ 小时，转换效率 $eff = 0.95$。同时需时刻防守安全 SOC 界限 $[10\%, 90\%]$，即电池内部总能量必须在为 <b>[200, 1800] kWh</b> 之间。
+            </div>
+        </div>
+        <div class="card">
+            <div class="constraint-badge c-safe">运行保护与状态互斥</div>
+            <div class="card-header" style="margin-top: 0.3rem;">功率上限与充放电互斥</div>
+            <div class="card-body">
+                充放电额定有功功率必须被限制在逆变器标称范围：
+                <div style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; margin: 0.5rem 0; color: var(--accent-green);">
+                    0 <= P_c[t] <= 1000 kW &nbsp;&nbsp; 0 <= P_d[t] <= 1000 kW
+                </div>
+                且物理上<b>禁止在同一 15 分钟时段内同时充电和放电</b>，即充放电动作必须满足严格的互斥性限制：$P_c[t] \times P_d[t] == 0$。
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Failure Modes -->
+    <h3 class="section-title">智能体失效模式 (Failure Modes) 与自动化审计</h3>
+    <table class="failure-table">
+        <thead>
+            <tr>
+                <th style="width: 25%;">失效模式类别</th>
+                <th style="width: 38%;">工业危害与机制原理</th>
+                <th style="width: 37%;">沙箱验证器的判定逻辑与代码实现</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="failure-name">⚠️ 1. 负电价自我空转骗补</td>
+                <td>在负电价频出的高比例绿电电网中，连续线性规划（LP松弛）在面对效率损耗时会选择在<b>同一时段同时充放电</b>，产生自我环流假象以骗取双倍负电价补贴。</td>
+                <td>检测充放电动作的乘积：<br><span class="detection-code">assert (P_c * P_d).sum() < 1e-3</span><br>若乘积非零证明 LP 松弛在此出清环境下物理失效。</td>
+            </tr>
+            <tr>
+                <td class="failure-name">⚠️ 2. 荷电状态越界</td>
+                <td>由于日前规划模型中缺少硬性容量边界，或者浮点精度发生累计漂移，导致储能电站越界发生过充或过放。</td>
+                <td>重新演算轨迹并检测两端极值：<br><span class="detection-code">assert SOC_min <= SOC[t] <= SOC_max</span><br>若有任意一步落在安全范围外则判定物理违规。</td>
+            </tr>
+            <tr>
+                <td class="failure-name">⚠️ 3. 时序未来函数泄漏</td>
+                <td>智能体在特征工程中采用了 <code>shift(-k)</code> 等手段，将未来时刻的真实电价作为历史特征输入，导致在验证集上获得不真实的极高准确率。</td>
+                <td>审查特征提取代码；建立<b>时序滚动验证（Rolling OOS）</b>机制，确保推理阶段完全屏蔽未来真实标签。</td>
+            </tr>
+            <tr>
+                <td class="failure-name">⚠️ 4. 实验数值欺诈</td>
+                <td>智能体为了迎合收益指标，并未真正计算优化，而是在最终导出的实验数据或文本日志中直接修改和编造利润数值。</td>
+                <td><b>审计数据源隔离</b>：只读评估器重新独立读取 <code>submit.csv</code> 进行物性守恒仿真推演，重新独立计算并覆盖一切收益指标。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Section 4: Boundaries -->
+    <h3 class="section-title">AutoResearch 基准测试研发与安全边界</h3>
+    <div class="boundary-layout">
+        <!-- Read Only -->
+        <div class="boundary-panel bp-readonly">
+            <div class="bp-header ro">
+                <span style="font-size: 1.25rem;">🔒</span> 只读评测边界 (Read-Only)
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+                以下文件构成了项目的<b>核心审计器与数据集</b>，被严格锁定以防智能体自我修改以伪造得分。
+            </p>
+            <ul class="file-list">
+                <li class="file-item">
+                    <span class="file-name">evaluate_strategy.py</span>
+                    <span class="file-desc">独立物性约束审计器</span>
+                </li>
+                <li class="file-item">
+                    <span class="file-name">output_demo.csv</span>
+                    <span class="file-desc">官方标准时间对齐模板</span>
+                </li>
+                <li class="file-item">
+                    <span class="file-name">to_sais_new/</span>
+                    <span class="file-desc">日前边界、气象网格原始数据集</span>
+                </li>
+            </ul>
+        </div>
+        <!-- Modify Allowed -->
+        <div class="boundary-panel bp-modify">
+            <div class="bp-header ma">
+                <span style="font-size: 1.25rem;">🛠️</span> 智能体开发边界 (Modify-Allowed)
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.2rem;">
+                以下为智能体可自由发挥、尝试各种特征工程、优化求解和调参策略的<b>代码试验田</b>。
+            </p>
+            <ul class="file-list">
+                <li class="file-item">
+                    <span class="file-name">lgb_baseline.py</span>
+                    <span class="file-desc">日前特征提取、电价预测与决策代码</span>
+                </li>
+                <li class="file-item">
+                    <span class="file-name">analyze_baseline.py</span>
+                    <span class="file-desc">格式自适应对齐、验证集指标可视化</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 5: Stage 1 Experiment Plan -->
+    <h3 class="section-title">第一阶段极简对比实验：LP松弛 vs MILP</h3>
+    <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--surface-border); border-radius: 16px; padding: 1.8rem; margin-bottom: 2.5rem;">
+        <svg class="stage-flow-svg" viewBox="0 0 740 100">
+            <!-- Path connections -->
+            <path d="M 120,50 L 220,50" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+            <path d="M 220,50 L 320,30" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+            <path d="M 220,50 L 320,70" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+            <path d="M 420,30 L 520,50" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+            <path d="M 420,70 L 520,50" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+            <path d="M 620,50 L 700,50" class="flow-path-active" style="stroke: var(--accent-cyan); stroke-dasharray: 6,6; animation: dash 20s linear infinite; fill:none; stroke-width:1.5;"></path>
+
+            <!-- Nodes -->
+            <g transform="translate(20, 20)">
+                <rect class="node-rect completed" width="100" height="60" style="fill:#161722; stroke: var(--accent-cyan); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="35" class="node-text" style="fill:var(--text-main); font-size:10px; font-weight:600; text-anchor:middle;">筛选负电价典型日</text>
+            </g>
+            <g transform="translate(170, 20)">
+                <rect class="node-rect completed" width="100" height="60" style="fill:#161722; stroke: var(--accent-cyan); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="35" class="node-text" style="fill:var(--text-main); font-size:10px; font-weight:600; text-anchor:middle;">Pyomo 构建模型</text>
+            </g>
+            <!-- Branch 1: LP -->
+            <g transform="translate(320, 5)">
+                <rect class="node-rect completed" width="100" height="50" style="fill:#161722; stroke: var(--accent-violet); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="25" class="node-text" style="fill:var(--text-main); font-size:9px; font-weight:600; text-anchor:middle;">实验组 A: LP 松弛</text>
+                <text x="50" y="37" class="node-subtext" style="fill:var(--text-muted); font-size:8px; text-anchor:middle;">无二元变量限制</text>
+            </g>
+            <!-- Branch 2: MILP -->
+            <g transform="translate(320, 55)">
+                <rect class="node-rect completed" width="100" height="50" style="fill:#161722; stroke: var(--accent-violet); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="25" class="node-text" style="fill:var(--text-main); font-size:9px; font-weight:600; text-anchor:middle;">实验组 B: MILP</text>
+                <text x="50" y="37" class="node-subtext" style="fill:var(--text-muted); font-size:8px; text-anchor:middle;">严格二元状态互斥</text>
+            </g>
+            <!-- Result collector -->
+            <g transform="translate(470, 20)">
+                <rect class="node-rect completed" width="100" height="60" style="fill:#161722; stroke: var(--accent-cyan); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="28" class="node-text" style="fill:var(--text-main); font-size:9px; font-weight:600; text-anchor:middle;">沙箱物理审计</text>
+                <text x="50" y="42" class="node-subtext" style="fill:var(--text-muted); font-size:8px; text-anchor:middle;">重构 SOC 轨迹与互斥</text>
+            </g>
+            <!-- Conclusion -->
+            <g transform="translate(620, 20)">
+                <rect class="node-rect completed" width="100" height="60" style="fill:#161722; stroke: var(--accent-green); rx:6px; stroke-width:1.5;"></rect>
+                <text x="50" y="35" class="node-text" style="fill:var(--text-main); font-size:9px; font-weight:600; text-anchor:middle;">实验报告与结论</text>
+            </g>
+        </svg>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+            日前出清价格中提取一天的电价数据（包含负电价段），作为输入注入 Pyomo 决策模型。通过在本地调用高精度求解器，分析实验组 A 在负电价时刻是否触发了“同时全功率充放电（以空转窃取负电价补贴）”的行为，并量化对比实验组 B 的合规有功流。
+        </p>
+    </div>
+
+    <!-- Footer buttons -->
+    <footer>
+        <a href="baseline_understanding.md" class="cta-btn">查看 Markdown 深度报告</a>
+        <a href="progress_dashboard.html" class="cta-btn secondary">🎛️ 返回大屏主控台</a>
+    </footer>
+
+</body>
+</html>
