@@ -9,6 +9,15 @@ its own error.**
 📄 **Read the report:** [`report/pdf/dispatch_value_report_en.pdf`](report/pdf/dispatch_value_report_en.pdf) (18 pages) ·
 [`report/pdf/dispatch_value_report_zh.pdf`](report/pdf/dispatch_value_report_zh.pdf) (16 pages)
 
+## Method at a glance
+
+[![SCALE method overview: learn relative charging and discharging window values, average five forecasts, and select a feasible dispatch schedule.](docs/assets/scale_method_overview_20260917.png)](docs/assets/scale_method_overview_20260917.png)
+
+SCALE connects decision-oriented learning to constrained storage dispatch:
+learn relative window values → average forecasts → select a feasible schedule.
+Figure 1 from the revised report dated 17 September 2026; the bundled PDFs above
+are the earlier report edition. Click the figure to view it at full resolution.
+
 ---
 
 ## The problem

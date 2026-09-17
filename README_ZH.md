@@ -7,6 +7,13 @@
 📄 **直接阅读：** [`report/pdf/dispatch_value_report_zh.pdf`](report/pdf/dispatch_value_report_zh.pdf)（16 页）·
 [`report/pdf/dispatch_value_report_en.pdf`](report/pdf/dispatch_value_report_en.pdf)（18 页）
 
+## 方法概览
+
+[![SCALE 方法概览：学习充放电窗口的相对价值，集成五个模型的电价预测，再选择满足约束的储能调度方案。](docs/assets/scale_method_overview_20260917.png)](docs/assets/scale_method_overview_20260917.png)
+
+SCALE 将面向决策的学习与受约束储能调度连接起来：学习窗口相对价值 → 集成电价预测 → 选择可行调度方案。
+本图为 2026 年 9 月 17 日修订报告中的图 1；上方仓库内 PDF 为较早版本。点击图片可查看原图。
+
 ---
 
 ## 问题
