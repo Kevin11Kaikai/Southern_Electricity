@@ -1,0 +1,12 @@
+{
+  "label_rows": 34922,
+  "complete_days": 360,
+  "fit_start": "2025-01-02",
+  "fit_end": "2025-10-03",
+  "val_start": "2025-10-04",
+  "val_end": "2025-11-02",
+  "v1_gradient_fit_end": "2025-10-19",
+  "v1_earlystop_start": "2025-10-20",
+  "holdout_start": "2025-11-03",
+  "holdout_end": "2025-12-31"
+}

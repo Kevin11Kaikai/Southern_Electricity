@@ -1,0 +1,5 @@
+# Additional packages used by tools/verify_reproduction.py to inspect the PDFs.
+pypdf>=5.0
+pdfplumber>=0.11
+pypdfium2>=4.30
+Pillow>=10.0

@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Ensemble decomposition in fixed role order; no headline reselection.}\label{tab:bags}
+\begin{tabularx}{\linewidth}{@{}Xrrrr@{}}
+\toprule
+Recipe & Seed mean & Seed SD & Curve mean & Increment \\
+\midrule
+Window CE / LSTM & 6050.11 & 242.75 & 6114.31 & 64.20 \\
+Listwise / Transformer & 6375.35 & 118.80 & 6693.88 & 318.52 \\
+SPO+ / LSTM & 6431.25 & 115.84 & 6476.01 & 44.76 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize Every recipe uses seeds 42--46. Seed SD describes these five fits, not uncertainty over future periods.}
+\end{table}

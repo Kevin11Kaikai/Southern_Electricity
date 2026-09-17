@@ -1,0 +1,17 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Historical RMSE versus the RMSE of the settled saved curve.}\label{tab:provenance}
+\begin{tabularx}{\linewidth}{@{}lXrrr@{}}
+\toprule
+Set & Model & Historical & Same curve & Realized \\
+\midrule
+v1 & \texttt{transformer\_contextual} & 0.514318 & 0.519558 & 5637.17 \\
+v1 & \texttt{lstm\_contextual} & 0.573845 & 0.552808 & 4554.39 \\
+v1 & \texttt{dlinear\_contextual} & 0.655333 & 0.600021 & 5897.54 \\
+v2 & \texttt{transformer\_contextual} & 0.630545 & 0.682788 & 6214.36 \\
+v2 & \texttt{lstm\_contextual} & 0.528645 & 0.517490 & 5709.51 \\
+v2 & \texttt{blend\_lgb\_transformer} & 0.584431 & 0.617157 & 6041.85 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize No original RMSE/MAE field is overwritten. Other point candidates agree within $10^{-5}$.}
+\end{table}

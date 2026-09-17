@@ -1,0 +1,37 @@
+\usepackage{amsmath,amssymb}
+\usepackage[a4paper,margin=23mm,headsep=7mm,footskip=11mm]{geometry}
+\usepackage{graphicx,booktabs,tabularx,array}
+\usepackage{xcolor,enumitem,caption,placeins,fancyhdr}
+\usepackage[authoryear,round]{natbib}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\definecolor{ink}{HTML}{253B53}
+\definecolor{accent}{HTML}{007D7A}
+\hypersetup{colorlinks=true,linkcolor=ink,citecolor=accent,urlcolor=accent,
+  pdfauthor={Independent Technical Report},pdfsubject={Frozen evidence; objective reformulation; constrained dispatch}}
+\graphicspath{{figures/}}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textcolor{ink}{Forecast error and dispatch value}}
+\fancyhead[R]{\footnotesize\Edition}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{3pt}
+\linespread{1.06}
+\setlist[itemize]{leftmargin=1.4em,itemsep=2pt,topsep=3pt}
+\setlist[enumerate]{leftmargin=1.6em,itemsep=2pt,topsep=3pt}
+\renewcommand{\arraystretch}{1.18}
+\setlength{\tabcolsep}{4.5pt}
+\captionsetup{font=small,labelfont=bf,skip=6pt}
+\setlength{\textfloatsep}{13pt plus 3pt minus 2pt}
+\setlength{\intextsep}{12pt plus 3pt minus 2pt}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.78}
+\newcommand{\takeaway}[1]{\par\noindent\textbf{\TakeawayLabel} #1\par}
+\newcommand{\reportfigure}[3]{\begin{figure}[!htbp]\centering
+\includegraphics[width=\linewidth]{#1}\caption{#2}\label{#3}\end{figure}}
+\input{equations.tex}

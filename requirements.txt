@@ -1,0 +1,7 @@
+# Rebuild the report from the packaged evidence records (report/shared/data).
+# This is all you need for `python tools/build_report.py`.
+# For byte-identical figure reproduction use requirements.lock.txt instead.
+numpy>=2.0
+pandas>=2.2
+scipy>=1.13
+matplotlib>=3.8

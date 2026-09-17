@@ -1,0 +1,23 @@
+{
+  "runs": [
+    {
+      "seed": 42,
+      "capture_epoch": 5,
+      "best_capture": 0.5989908104412752,
+      "realized_epoch": 5,
+      "best_realized": 8010.807506383087,
+      "realized_at_capture_epoch": 8010.807506383087
+    },
+    {
+      "seed": 43,
+      "capture_epoch": 20,
+      "best_capture": 0.6003004575375271,
+      "realized_epoch": 17,
+      "best_realized": 8569.672507435704,
+      "realized_at_capture_epoch": 8257.467206955576
+    }
+  ],
+  "mean_best_capture": 0.5996456339894012,
+  "mean_best_realized": 8290.240006909395,
+  "scope": "epoch-log aggregation, not independent replay of missing validation prediction curves"
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "source": "holdout_rmse_v1",
+    "model": "transformer_contextual",
+    "original_rmse": 0.514318,
+    "same_curve_rmse": 0.5195576699847868,
+    "difference": 0.0052396699847867545
+  },
+  {
+    "source": "holdout_rmse_v1",
+    "model": "lstm_contextual",
+    "original_rmse": 0.573845,
+    "same_curve_rmse": 0.5528080180991081,
+    "difference": -0.021036981900891982
+  },
+  {
+    "source": "holdout_rmse_v1",
+    "model": "dlinear_contextual",
+    "original_rmse": 0.655333,
+    "same_curve_rmse": 0.6000206874172418,
+    "difference": -0.05531231258275826
+  },
+  {
+    "source": "holdout_rmse_v2",
+    "model": "transformer_contextual",
+    "original_rmse": 0.630545,
+    "same_curve_rmse": 0.6827877171860671,
+    "difference": 0.0522427171860671
+  },
+  {
+    "source": "holdout_rmse_v2",
+    "model": "lstm_contextual",
+    "original_rmse": 0.528645,
+    "same_curve_rmse": 0.5174897636336012,
+    "difference": -0.011155236366398813
+  },
+  {
+    "source": "holdout_rmse_v2",
+    "model": "blend_lgb_transformer",
+    "original_rmse": 0.584431,
+    "same_curve_rmse": 0.617156514269047,
+    "difference": 0.03272551426904702
+  }
+]

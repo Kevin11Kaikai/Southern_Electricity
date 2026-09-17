@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "seed": 42,
+      "capture": 0.5989908104412752,
+      "capture_epoch": 5.0,
+      "realized": 8010.807506383087,
+      "realized_epoch": 5.0,
+      "realized_at_capture_epoch": 8010.807506383087
+    },
+    {
+      "seed": 43,
+      "capture": 0.6003004575375271,
+      "capture_epoch": 20.0,
+      "realized": 8569.672507435704,
+      "realized_epoch": 17.0,
+      "realized_at_capture_epoch": 8257.467206955576
+    }
+  ],
+  "mean_best_capture": 0.5996456339894012,
+  "mean_best_realized": 8290.240006909395,
+  "mean_realized_at_capture_epoch": 8134.137356669331,
+  "scope": "reconstructed from original per-epoch logs; no saved val30 curves to replay settlements"
+}

@@ -1,0 +1,274 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf,ItalicFont=texgyretermes-italic.otf,BoldItalicFont=texgyretermes-bolditalic.otf]
+\newcommand{\Edition}{English edition}
+\newcommand{\TakeawayLabel}{Takeaway.}
+\input{preamble.tex}
+\hypersetup{pdftitle={From Pointwise Forecast Error to Constrained Dispatch Value}}
+\begin{document}
+\begin{center}
+{\LARGE\bfseries\color{ink} From Pointwise Forecast Error\\[3pt] to Constrained Dispatch Value}\par\vspace{7pt}
+{\large Objective Reformulation and Frozen Ensemble Evaluation}\par\vspace{10pt}
+\input{author.tex}\par
+{\small Evidence review: 15 September 2026}
+\end{center}
+\vspace{3pt}\noindent\textcolor{accent}{\rule{\linewidth}{0.8pt}}
+\begin{abstract}
+Electricity-price forecasts in this project serve a constrained daily scheduling decision: choose one eight-slot charging block followed by one eight-slot discharging block, or remain idle. We begin with a failure of the original evaluation logic: lower pointwise RMSE does not reliably identify higher realized dispatch value among the saved candidates. We explain this through the geometry of the feasible actions and reformulate learning as maximizing the realized value of the action induced by a forecast. The implementation combines centered block-sum regression, a listwise window loss, and a frozen five-seed price-curve average. On the specified 59-day evaluation period, this protocol realizes a mean score of \textbf{6693.88}, compared with \textbf{6214.36} for the historical MSE-trained Transformer reference: an observed gain of \textbf{479.51 (7.72\%)}. Window-ranking consistency has a stronger descriptive association with value than point error, whereas the training surrogate itself does not show a stable association. The gain is concentrated: 86.0\% of its net total arises on one day, the paired seven-day block interval is $[-227.87,1626.28]$, and the headline records a deeper single-day loss than the reference in the same window. The contribution is a traceable failure-driven formulation and implementation with a positive period-specific outcome; transferable improvement and loss-specific causality remain open.
+\end{abstract}
+\noindent\textbf{Keywords:} electricity-price forecasting; predict-then-optimize; constrained scheduling; learning to rank; ensemble evaluation.
+
+\section{Introduction}
+The practical question is simple: \emph{does a more accurate price curve produce a better charging and discharging decision?} The answer matters because a forecasting system is ultimately judged by the decisions it enables. Pointwise error weights every forecast deviation, while a fixed scheduling policy depends on a small number of differences between feasible window values. Better performance on the first criterion therefore need not order finite fitted models in the same way as the second.
+
+The historical point-prediction candidates examined here were evaluated by squared error. A subsequent replay of the same saved price curves through the scheduling solver exposed a mismatch: a contextual Transformer with worse point error could produce a higher realized score. That observation motivates the central progression of this report: define the original learning problem, identify the decision structure it only indirectly serves, reformulate the objective, implement a tractable training surrogate, and evaluate the resulting frozen protocol.
+
+The report makes three bounded contributions. First, it connects the observed failure to the action-contrast directions that determine regret. Second, it implements block-level regression and listwise learning over all 3321 active windows, followed by curve averaging across five fixed seeds. Third, it reconciles prediction provenance, reports the observed improvement, and separates descriptive gain decomposition from causal attribution. These are contributions to the formulation and evaluation of this particular task; no new general learning theorem or universal superiority of a loss is claimed.
+
+\section{Related Work}
+\paragraph{Price forecasting and point accuracy.}
+Reviews of electricity-price forecasting emphasize model comparisons, evaluation protocols, and reproducible benchmarks \citep{lago2021}. Tree methods such as LightGBM provide strong tabular baselines \citep{ke2017}. Here the supplied target is an anonymized price series, and these references provide methodological context rather than evidence that the data originate from a particular electricity market.
+
+\paragraph{Learning for downstream optimization.}
+Predict-then-optimize research evaluates forecasts through the decisions they induce. Smart Predict-then-Optimize introduces decision-aware losses and the SPO+ surrogate \citep{elmachtoub2022}. This motivates distinguishing price error, predicted decision value, and realized decision value. Our main implementation does not differentiate through the discrete solver; it trains a smooth surrogate on the finite set of active window values.
+
+\paragraph{Ranking and ensembles.}
+\citet{mandi2022} formulate decision-focused learning through ranking losses. We adapt a listwise construction with separate target and prediction temperatures and a centered block-sum error term. Independently initialized model ensembles also have a substantial literature \citep{lakshminarayanan2017}. Our use is specifically to average price curves before selecting one legal action; it does not establish calibrated predictive uncertainty. The task-specific synthesis and its audited evidence are the focus.
+
+\section{Problem Setup: A Failure-Driven Formulation}
+Let $X$ denote inputs available when the daily decision is made, $A\in\mathbb R^{96}$ the subsequently observed price curve, and $\mathcal I_{\rm dec}$ the information available at decision time. Time indices are $t=0,\ldots,95$. A predicted curve is $q=f_{h,\theta}(X)$.
+
+\subsection{Step 1: the original learning problem}
+\EqPoint
+Here $h$ is an allowed prediction rule and $\theta$ its parameters in $\Theta_h$. Information measurability means that a prediction must be computable from information already available; the future target curve is excluded. Prediction-rule membership is a valid search-space constraint and is therefore written under subject to. The set $\mathcal H$ enumerates the families that actually appear in the point-loss candidate panels of Section~\ref{sec:results}: gradient-boosted trees (LightGBM, XGBoost, CatBoost, HistGB), ridge regression, a weekday-and-slot sample mean, DLinear, LSTM, Transformer, and a blend rule. The blend is postprocessing of fitted forecasts, not a new base-model family. Its weights were selected by v2 validation RMSE and then fixed at $0.75q_{\rm Transformer}+0.25q_{\rm LightGBM}$ for evaluation. A fixed rule may have a singleton parameter space. Equation~\eqref{eq:point} expresses the point-accuracy criterion; actual fitting also involves regularization, fixed budgets, and selection restrictions. It does not claim that every candidate exactly solves one unregularized empirical problem.
+
+For a fixed set of observations and equal weights, minimizing overall RMSE gives the same optimizer as minimizing average squared error because the square root is monotone. Equation~\eqref{eq:point} is the population formulation; training uses its finite-sample counterpart. Its direct purpose is pointwise price accuracy.
+\takeaway{The original objective specifies what price errors to minimize, but does not directly optimize the value of the induced schedule.}
+
+\subsection{Step 2: define the actual downstream decision}
+\EqDispatch
+There are $\sum_{c=0}^{80}(81-c)=3321$ active schedules and one idle schedule. Every active schedule charges at the fixed coded power for eight consecutive slots, then discharges for eight slots, with zero output elsewhere. Denote a solver-selected maximizer by $u^*(q)$, using the recorded deterministic tie rule. The realized score is $S(A,q)=A^\top u^*(q)$; the oracle is $O(A)=\max_{u\in\mathcal U_{8+8}}A^\top u$.
+
+The solver sees $q$, and settlement sees $A$ only after the action has been chosen. The official project score is the unscaled sum of price times coded power. It does not multiply by 0.25 hours and is reported in original score units, not currency or net trading profit.
+\takeaway{Forecast quality matters through the feasible action it selects. Predicted value and realized value are different quantities.}
+
+\subsection{Step 3: identify the empirical failure}
+\EqFailure
+These two points use the saved contextual Transformer curves from the v1 and v2 candidate sets on the same 59 days. Both RMSE and realized score are recomputed or verified against those same curves. The lower-error curve realizes less value. The example refutes a monotone ordering of these fitted candidates; differing recipes mean it is not an isolated experiment on one model parameter. Section~\ref{sec:results} supplies the complete candidate comparisons.
+\takeaway{The failure is an unreliable model-ranking proxy in this project, not evidence that squared-error learning is universally wrong.}
+
+\subsection{Step 4: explain why mismatch is possible}
+\EqInvariance
+Every action in $\mathcal U_{8+8}$ has $\mathbf1^\top u=0$. A common price offset therefore cancels, and a positive rescaling preserves all window orderings and the idle threshold. The argmax sets are identical; a fixed tie rule also gives the same action in exact arithmetic. The code takes the first active window within $64\varepsilon_{64}\max_w|S_w|$ of the maximum, ordered by charging then discharging start, and selects idle if that score is nonpositive. This treats machine-level near ties as ties, so exact algebraic invariance is not a guarantee of identical floating-point actions under arbitrary extreme rescaling. RMSE generally changes under either transformation. This invariance relies on the balanced action contract and must be reconsidered when losses, costs, or unequal energy flows are added.
+
+\EqRegret
+The following regret bounds concern exact maximizers; numerical tie handling and audit tolerances are separate. Here $u_A=u^*(A)$, $u_q=u^*(q)$, and $\Pi_{\mathcal D}$ is the orthogonal projection onto the space of feasible action differences. Optimality under $q$ gives $q^\top(u_A-u_q)\le0$, yielding the first upper bound. The second follows from projection and Cauchy--Schwarz. Forecast errors perpendicular to every action contrast cannot change relative action values. Even within the relevant subspace, the same error norm may occur near or far from a boundary between competing actions.
+\takeaway{Decision regret depends on errors along feasible action contrasts and on decision margins. A smaller full-curve error norm does not by itself order candidate realized values.}
+
+\subsection{Step 5: reformulate the learning objective}
+\EqOuter
+The outer problem chooses a predictor to maximize the actual value of the schedule it will induce; the inner problem selects a legal schedule using only its predicted prices. Replacing maximization by expected oracle regret gives an equivalent objective because the oracle term does not depend on the chosen predictor. True training labels may supervise learning, and evaluation labels may settle a locked action, but neither permits future labels to enter a live decision.
+
+\EqBayes
+This identity is an essential qualification. With finite second moments and unrestricted population squared-error learning based on $X$ and a fixed feasible set, the conditional mean is optimal for the risk-neutral linear objective among decisions using $X$. Our motivation is therefore finite data, restricted models, regularization, optimization, and possible distribution change---not a contradiction of this population result. Equation~\eqref{eq:outer} is also risk-neutral; it contains no explicit tail-risk penalty.
+\takeaway{The objective is reconstructed to match the task under practical learning restrictions. A smooth surrogate is an implementation choice, not an automatic guarantee of better decisions.}
+
+\subsection{Step 6: distinguish the implemented contract from battery physics}
+\EqPhysical
+Here $c_t,d_t$ are physical charging and discharging powers, $s_t$ is state of charge, $E_{\max}$ is battery capacity, and $\eta_c,\eta_d$ are efficiencies. The set $\mathcal U_{8+8}^{\rm phys}$ expresses the same window strategy in physical power units. The battery and strategy constraints must both hold. A terminal condition such as $s_{96}=s_0$ would be an additional modeling choice; it is not implied by the displayed constraints.
+
+For a purely illustrative battery with capacity 4 MWh, initial SOC 50\%, charging power 1 MW, and unit efficiency, eight quarter-hour charging slots add 2 MWh and reach 100\% SOC, violating the 90\% bound. Thus legal windows alone do not ensure physical feasibility. Equal charging and discharging blocks also do not restore the initial SOC when efficiency is below one.
+\takeaway{The reported 6693.88 was obtained under $\mathcal U_{8+8}$ only. Explicit SOC, capacity, efficiency, cycling costs, and network constraints are an extension, not implemented features of this result.}
+
+\section{Method}
+\reportfigure{fig01_method.pdf}{Implementation of the reconstructed objective. This is a conceptual diagram drawn in Python. Training targets supervise block values and the window distribution; inference averages five frozen price curves and selects one legal action. True evaluation prices enter only settlement. The 3321-way training distribution excludes idle, while the inference solver includes it.}{fig:method}
+\subsection{Map prices to the quantities the solver reads}
+\EqBlocks
+The centering operator $C$ removes the daily level. Here $C\in\mathbb R^{96\times96}$ and $B\in\mathbb R^{89\times96}$ produces 89 overlapping eight-slot sums, with $g(q)\in\mathbb R^{3321}$. Each active action value is the difference of two block sums, multiplied by $P$. The bound in~\eqref{eq:blockbound} follows because every active action has at most $2P\|BC(A-q)\|_\infty$ value error, and regret compares two actions. It motivates attending to block errors, but does not say that minimizing block MSE exactly minimizes regret.
+
+Some historical block models output block \emph{means}. Their corresponding sums are eight times those means. This constant preserves ordering but changes loss scales and softmax temperatures; the present loss uses sums and omits the common score multiplier $P=1000$.
+
+\subsection{From a hard optimal-window label to a soft ranking target}
+\EqHardLoss
+The original window loss couples a block-value anchor with cross-entropy on one oracle window. Code computes the hard-label argmax from uncentered true prices: centering cancels between equal-length blocks, preserving the maximizing set in exact arithmetic. The tensor argmax selects the first exact maximum; this is distinct from the dispatch solver's near-tie tolerance. A wrong first-ranked window can still be near optimal in realized value, and ties can make a unique index an arbitrary label. We therefore use a soft target over all active window values:
+\EqListwise
+The target temperature controls how much probability near-optimal windows retain. The prediction temperature controls logit sharpness. These are fixed recipe values in the final ensemble, not parameters tuned on this report's diagnostics. The true-price target is detached from gradient computation. The discrete argmax remains in evaluation; training differentiates through block sums and softmax.
+
+As $\tau_{\rm tgt}\to0$, the target tends to the uniform distribution on the maximizing set. It becomes the one-hot hard-window target only when the maximizer is unique, with the other settings held equal. This is a relation between loss families, not proof that the selected listwise recipe dominates the earlier loss.
+
+Fixed-temperature cross-entropy is sensitive to positive rescaling of $q$, even though the action is invariant. The block term anchors amplitude, but neither term makes the total loss a scale-invariant decision metric. We explicitly test the unchanged training proxy in Results and report its weak association. In addition, the loss covers active windows only: learning when to choose idle is not explicitly supervised by its categorical target.
+
+\subsection{Freeze the recipe and average curves before optimizing}
+\EqMean
+Averaging commutes with evaluating a \emph{fixed} action because the objective is linear. It does not commute with argmax. Averaging legal powers could violate the fixed 8+8 strategy; averaging curves followed by the exact solver returns one permitted action. The final pipeline freezes the family, loss parameters, epoch count, five seeds, and curve-mean combiner before this ensemble evaluation. Other saved combinations remain diagnostic controls.
+
+SPO+, pairwise, and differentiable black-box alternatives belong to the broader exploratory record. The central method here is the stated listwise recipe plus curve averaging, not a claim that every decision-focused route improves performance.
+\FloatBarrier
+
+\section{Experimental Setup}
+\subsection{Data, temporal roles, and information availability}
+\begin{table}[!htbp]\centering\small
+\caption{Data and temporal roles. Counts refer to complete labeled days, not every calendar day in each span.}\label{tab:data}
+\begin{tabularx}{\linewidth}{@{}p{.19\linewidth}p{.28\linewidth}X@{}}\toprule
+Role & Dates / size & Permitted use \\\midrule
+Available labels & 34,922 observations; 360 complete days in 2025 & Incomplete days excluded from day-level fitting and evaluation. \\
+Inner fitting & 2 Jan--3 Oct 2025; 271 days & Fit candidate models and training-only preprocessing. \\
+Validation & 4 Oct--2 Nov 2025; 30 days & Select recipe and epoch rule from development evidence. \\
+Final development & 2 Jan--2 Nov 2025; 301 days & Refit each fixed seed for the frozen epoch count. \\
+Evaluation & 3 Nov--31 Dec 2025; 59 days, 5664 slots & Settle fixed predictions and perform the present retrospective diagnostics. \\
+Separate unlabeled period & 1 Jan--28 Feb 2026; 59 days & Submission inputs only; no realized-score evidence here. \\\bottomrule
+\end{tabularx}\end{table}
+
+Table~\ref{tab:data} specifies the headline's validation and refitting route. Historical point candidates retain their recorded fitting rules, and the two panels used in R1 were not produced by one common rule. V1 LightGBM, XGBoost, and CatBoost use 1500 fixed rounds, but HistGB uses 300; none early-stops. Ridge penalties are fixed; sequence models fit on 287 days with a 14-day early-stopping tail. Tuned v2 candidates use the 271/30 split and then refit on 301 days, with the fixed LightGBM baseline and weekday-slot mean as exceptions. HistGB checks validation error every 20 iterations up to 300 and stops selection after three unimproved checks, rather than using a universal 1500-round cap and 100-round patience. Both panels are settled on the same 59 days by the same solver, but they are two different fitting processes; this report therefore analyzes them separately and never pools them into one candidate sample. The recorded rules are exported to \path{data/candidate_panel_rules.json}. The headline uses 67 contextual input channels. Contemporaneous realized boundary columns and target $A$ are excluded. Whole-day summaries of supplied forecast boundaries are legitimate only if the complete boundary curve was published before the decision. That publication contract, market identity, and authoritative physical price units are not established by the anonymized files; operational claims are conditional on resolving them.
+
+The 59-day period had already been inspected during earlier candidate comparisons and Phase B stress analysis. The saved flag that holdout was not used for selection applies to the final seed-bag protocol, not to the entire research history. Accordingly, this report calls it a \emph{historically exposed evaluation period}, not an untouched prospective confirmation set.
+
+\subsection{Contract, score, and aggregation}
+\EqCapture
+\begin{table}[!htbp]\centering\small
+\caption{Decision contract and evaluation definitions.}\label{tab:contract}
+\begin{tabularx}{\linewidth}{@{}p{.24\linewidth}X@{}}\toprule
+Item & Implemented definition \\\midrule
+Resolution and actions & 96 slots/day; charge 8, then discharge 8; coded power $\pm1000$; 3321 active windows plus idle. \\
+Decision inputs & The forecast curve only. Idle is selected if its zero score is at least the best active predicted value. \\
+Physical constraints & Fixed power pattern and ordering are checked. No explicit SOC, efficiency, degradation, or network model. \\
+Official score & $S_i=A_i^\top u_i$; no duration multiplier. Negative realized days remain in all averages. \\
+Validation selector & Mean daily capture $C_{\rm day}$; days receive equal weight. Search aggregate: $0.599646$ (defined below). \\
+Main reported metrics & Mean realized score and $C_{\rm agg}$; capture weights days by oracle opportunity $O_i$. All observed $O_i>0$. \\
+Diagnostic metrics & Same-curve RMSE; centered RMSE; unchanged listwise proxy; average within-day window rank correlation. \\\bottomrule
+\end{tabularx}\end{table}
+\FloatBarrier
+The two capture definitions can rank models differently when daily opportunity varies. The 0.599646 is the mean of the best capture values for search seeds 42 and 43, at epochs 5 and 20; 8290.24 averages their best realized scores, at epochs 5 and 17. These are not paired metrics from one locked set of forecasts, nor the five-seed ensemble's val30 result. The median capture epoch 12.5 is rounded to 12 by Python, then scaled to 13 for refitting. Per-epoch logs reproduce these aggregates, but missing val30 curves prevent independent daily settlement replay.
+
+\subsection{Frozen model and training settings}
+\begin{table}[!htbp]\centering\small
+\caption{Frozen ensemble recipes. Each uses contextual inputs and seeds 42--46, set before constructing the model.}\label{tab:config}
+\begin{tabularx}{\linewidth}{@{}p{.26\linewidth}Xrr@{}}\toprule
+Recipe / role & Loss parameters & Epochs & Learning rate \\\midrule
+Listwise Transformer / headline & $\lambda=2$, $\tau_{\rm tgt}=0.05$, $\tau_{\rm pred}=0.10$ & 13 & $10^{-3}$ \\
+Window CE LSTM / control & $\lambda=0.5$, $\tau=0.2$ & 34 & $10^{-3}$ \\
+SPO+ LSTM / control & $w_{\rm SPO}=0.5$ & 27 & $3\times10^{-4}$ \\\bottomrule
+\end{tabularx}\end{table}
+The Transformer has two encoder layers, hidden width 32, four attention heads, feed-forward width 64, dropout 0.1, a learned positional tensor, and a linear price head. The LSTM has one layer with hidden width 32 and a linear head. Final fitting uses Adam, batches of 16 days, gradient-norm clipping at 1.0, and training-derived median filling and feature standardization. The selected Transformer epoch statistic was 12 on val30; the recorded development refit count is 13. This report reuses the resulting predictions; it performs no retraining.
+
+\begin{table}[!htbp]\centering\small
+\caption{Comparison groups organized by the question they answer.}\label{tab:groups}
+\begin{tabularx}{\linewidth}{@{}p{.27\linewidth}X@{}}\toprule
+Evidence group & Question and remaining changes \\\midrule
+Point candidates: v1 (16), v2 (19) & Does point error rank decision value? V1 fixes tree rounds (HistGB 300, others 1500) and uses a sequence early-stopping tail; tuned v2 candidates use val30, with fixed-baseline exceptions. Families and features also vary; panels remain separate. \\
+Matched LightGBM and historical MSE Transformer & What does the frozen headline realize relative to familiar references on identical dates and actions? Training loss and recipe are not isolated. \\
+MSE selection-rule controls & With MSE training retained, what changes when validation selection uses RMSE or realized score? \\
+Three five-seed recipes & What is each curve-mean outcome relative to its own five seed outcomes? Different families/losses remain distinct controls. \\
+Earlier window-CE controls & Do existing single-seed comparisons support universal listwise superiority? Epochs and other recipe settings still differ. \\\bottomrule
+\end{tabularx}\end{table}
+
+\subsection{Provenance and statistical procedure}
+The analysis verifies 62 saved prediction curves across five source directories: common timestamps and targets, legal saved actions, predicted objective optimality, actual settlements, and oracle values. Plots of point candidates use RMSE recalculated from their saved prediction arrays. Six historical RMSE entries differ from the curves associated with their settlements; both values are retained separately in Appendix~\ref{app:provenance}. No source leaderboard is edited.
+
+We use paired circular day-block resampling with primary block length seven days, 10,000 replicates, and fixed random seed $20260915+7$. Sensitivities use block lengths one and three with correspondingly offset seeds. Each replicate samples contiguous circular blocks until 59 positions are obtained. All models share the sampled days, and metrics and candidate correlations are recalculated together. This preserves pairing and some short-range dependence; it assumes the observed sequence can represent comparable periods. Intervals use the 2.5\% and 97.5\% bootstrap percentiles. \textbf{Only dates are resampled; the 16/19 candidates remain fixed. Candidate sampling, model search, and training randomness are excluded.} These intervals do not correct historical exploration or guarantee population coverage under future seasonality or distribution shift.
+\FloatBarrier
+
+\section{Results}\label{sec:results}
+\subsection{R1: Does point error reliably identify dispatch value?}
+\reportfigure{fig02_rmse.pdf}{Point error versus realized value for the complete v1 and v2 point-trained candidate sets. Bottom panels remove each day's mean before computing RMSE. Each point summarizes the same 59 days; the plotted candidate means are dependent and uncertain. Correlation intervals condition on fixed candidates and use common day resampling (Table~\ref{tab:corr}). The teal diamonds identify the contextual Transformers, not selected outliers removed from the analysis.}{fig:rmse}
+The Pearson correlations between same-curve RMSE and realized value are $+0.351$ for v1 and $+0.005$ for v2. Their seven-day block intervals include zero. Centering each day gives $+0.252$ and $-0.108$, respectively. Thus the result is not explained solely by an irrelevant daily price offset. The v2 Transformer has point-error rank 15 of 19 yet realizes the highest score within that point-candidate set. This historical fact motivates the reference; it does not authorize selecting a new headline on the same period.
+\takeaway{Across these saved candidates there is no stable negative relationship that makes smaller RMSE a reliable selector of higher realized value. The evidence does not establish a universal inverse relationship.}
+
+\FloatBarrier
+\subsection{R2: What does the reconstructed objective actually explain?}
+\EqDiagnostic
+\reportfigure{fig03_proxy.pdf}{Two different diagnostics on the same candidate curves. Top: the actual headline training proxy with fixed parameters from Table~\ref{tab:config}. Bottom: the scale-invariant window-ranking statistic $T$. This figure tests the surrogate rather than presuming it works; the bottom row measures decision structure, not a replacement training objective validated on future data.}{fig:proxy}
+The unchanged listwise training proxy correlates with realized value at $+0.320$ in v1 and $-0.165$ in v2. Since lower loss is preferred, the desired negative association is neither stable nor strong. We therefore do not claim that the new training loss is a superior cross-model selection metric.
+
+Window-ranking consistency is different: its Pearson association with realized value is $+0.849$ in v1 and $+0.777$ in v2, with conditional intervals $[0.472,0.881]$ and $[0.197,0.852]$. Average ranks handle tied window values. The primary definition uses float64 eight-slot sums; changing reduction order alters a few machine-level ties but leaves three-decimal conclusions unchanged. Controlling linearly for the ratio of centered forecast amplitude to centered true amplitude yields partial correlations $0.824$ and $0.713$ (intervals $[0.448,0.868]$ and $[0.142,0.807]$). Applying the same amplitude control to the training proxy gives $0.059$ and $-0.361$, with intervals $[-0.443,0.335]$ and $[-0.664,0.023]$. Thus both panels receive the same sensitivity analysis, which still does not establish stable surrogate selection ability. Linear control is not causal adjustment and cannot remove all model differences.
+
+Window rank and realized value are functions of the same forecast/true window-value vectors: the former measures all window orderings, while the latter reads true value at the predicted argmax. Their high association may partly reflect this mathematical coupling. They are not identical statistics, and the observed magnitude remains data-dependent. This is a structural diagnosis, but it does not show that validation-period surrogate rankings predict later performance. In particular, computing the empirical outer objective $J$ on these same days would simply reproduce realized score. A genuine selection test requires predictions on an earlier period excluded from all fitting. The v2 checkpoint-fitting pipeline uses all 301 development days; v1 sequence models fit on 287 and early-stop on the remaining 14, also overlapping val30. Metadata do not enumerate fit dates, so this scope must be traced through split records and fitting code. These checkpoints cannot directly provide val30 evidence untouched by development. The window-rank intervals are markedly asymmetric (v1 bootstrap median about 0.771). We use them as sensitivity ranges, not calibrated small-sample coverage, and do not apply ordinary IID BCa to dependent days.
+\takeaway{The data support the relevance of window ordering. They do not yet validate the stronger claim that the trained surrogate selects better future models.}
+
+\FloatBarrier
+\subsection{R3: What did the frozen protocol realize?}
+\input{tables/main_results.tex}
+\reportfigure{fig04_main.pdf}{Absolute score is displayed on an expanded dot scale. The gain bar starts at zero and carries the paired seven-day block interval. The point estimate is an observed improvement on this period; the interval represents uncertainty conditional on these records and does not correct historical selection.}{fig:main}
+The headline realizes 6693.88 versus 6214.36, an observed improvement of 479.51 (7.72\%) in daily mean score. Aggregate capture rises from 69.04\% to 74.37\%. These are actual settlements under the fixed action contract. The headline's predicted score is only 4778.06, further illustrating why predicted value cannot be substituted for realized value.
+
+\input{tables/paired.tex}
+\reportfigure{fig06_daily.pdf}{All paired daily differences and their cumulative sum. Orange marks the largest positive day and navy the largest shortfall; both remain in the primary result and are labeled. Removing a day is a sensitivity calculation, not an alternative selected evaluation period.}{fig:daily}
+On 30 December, the headline scores 27836.92 against 3499.50 for the reference. That difference contributes 86.02\% of the total net gain. Removing the day reduces the mean difference to 68.17. With a $10^{-6}$ score tolerance, the outcomes are 25 wins, 14 ties, and 20 losses; counting tiny floating-point differences as wins would overstate that tally. The paired interval crosses zero. This limits inference about repeatable average advantage while leaving the observed 479.51 unchanged.
+
+A mean does not describe the downside a dispatcher carries. On the same records, winning days sum to $+46151.09$ and losing days to $-17859.81$; their sum is the total net gain of 28291.28. The largest single-day shortfall is $-3582.18$ on 12 December, with no tied minimum. The script returns the first date for exact ties and separately lists all dates within tolerance. In realized daily score, the headline's worst day is $-5922.66$ against $-2340.48$ for the reference; the headline has one negative day, the reference two, and the matched baseline three with a worst day of $-12064.47$. Relative to the matched baseline, the frozen protocol improves both the mean and the worst day. Relative to the MSE Transformer reference, it improves the mean and the median (6984.89 against 6683.35) but records a deeper single-day loss in this period. These are realized values for this evaluation window, not a tail-risk model, and no action contract was changed in response to them.
+\takeaway{The full evaluation window records a positive mean increment of 479.51 (7.72\%). That observed outcome is concentrated on one day; a repeatable average advantage remains unestablished.}
+
+\FloatBarrier
+\subsection{R4: Which parts of the improvement can be attributed?}
+\EqDecomposition
+\input{tables/bags.tex}
+\reportfigure{fig05_ensemble.pdf}{Fixed-seed outcomes, their arithmetic mean, and the curve-mean outcome. Slight vertical offsets in the left panel only separate overlapping markers and carry no quantity. The right panel decomposes the headline-reference difference around the mean single-seed score. It is an arithmetic identity, not an isolated causal effect of the loss or of every implementation change.}{fig:ensemble}
+The five listwise Transformer seeds average 6375.35; averaging their curves realizes 6693.88, adding 318.52. Each value in Equation~\eqref{eq:decomp} is rounded independently while the differences are computed from unrounded numbers, so subtracting the displayed figures can differ by one unit in the last place. The remaining 160.99 relative to the historical reference includes differences in loss, recipe, and model fitting. It cannot be labeled a pure loss gain. Moreover, 94.46\% of the total averaging increment arises on 30 December; excluding that day leaves a mean averaging increment of 17.94. The other two predeclared bags show smaller averaging increments, and none is substituted for the headline.
+
+\input{tables/selection_control.tex}
+Changing only the validation selection metric in the recorded MSE control produces about $+4$, $-29$, and $0$ for Transformer, LSTM, and DLinear. The outcome therefore cannot be explained by assuming that merely changing the selection ruler is sufficient.
+
+The same-initialization convention applies only within each model family in the recorded Codex control run, not across all historical routes. Its window-CE Transformer control realizes 6570.71 as a single seed, above the listwise single-seed mean of 6375.35 and its best recorded seed, 6551.77. These recipes also differ in epoch count (29 versus 13), loss settings, and selection history, so this is a counterexample to an across-record dominance claim, not a causal test proving the older loss superior. A corresponding LSTM control is 137.79 below its earlier reported result, illustrating sensitivity to implementation and initialization conventions without isolating their individual effects.
+\takeaway{The evidence isolates a within-recipe arithmetic averaging increment and a selection-rule control. It does not isolate a universally superior loss or a transferable ensemble effect.}
+\FloatBarrier
+
+\section{Discussion and Limitations}
+\subsection{What the theoretical analysis contributes}
+The useful abstraction is the composition of a forecast with a constrained optimizer. The action set determines which price contrasts matter; the learning objective determines how finite model capacity is allocated to them. This explains why error diagnostics should be derived from the decision contract and why changing the feasible set may require redesigning the loss. The regret bounds connect that intuition to explicit inequalities, while the conditional-mean result prevents overstating the failure of MSE.
+
+\EqVariance
+If errors in a particular action-value contrast had equal variance $\sigma^2$ and common pairwise correlation $\rho$, averaging would have the displayed variance. This is a possible mechanism for stabilizing relative action estimates. Neither $\sigma^2$ nor $\rho$ is estimated here, and lower contrast variance does not guarantee higher value after a discontinuous argmax. The observed concentration on one date makes this a mechanism hypothesis, not an established explanation of the gain.
+
+\subsection{Limits of the evidence and the next discriminating tests}
+\begin{itemize}
+\item \textbf{Time and prior exposure.} There are only 59 evaluation days, previously observed in the wider research process. Heavy tails, dependence, and historical exploration limit prospective interpretation; day-block intervals do not remove these limitations.
+\item \textbf{Physical and information scope.} Battery SOC, losses, degradation, and network limits are absent from the implemented solver. The availability time of the full input forecast curve and the data's market provenance require external confirmation before deployment.
+\item \textbf{Surrogate scope.} The actual fixed-temperature proxy is not scale invariant and has weak candidate-level associations here. Its active-only target also omits the idle alternative, which could matter in low-opportunity periods.
+\item \textbf{Attribution.} The headline differs from the reference in training recipe and seed aggregation. Existing controls do not form a complete same-family, same-initialization, same-budget factorial loss experiment.
+\item \textbf{Outcome distribution and downside.} The outer business objective is risk-neutral expected score; actual training uses MSE or block/ranking surrogates and does not directly optimize expected realized score; Equation~\eqref{eq:outer} carries no tail penalty. In this window the headline's worst day is $-5922.66$ against $-2340.48$ for the reference. With 59 heavy-tailed days the future frequency of such losses cannot be estimated reliably. If the application constrains single-day downside, that constraint belongs in the feasible set or the objective and requires re-evaluation.
+\end{itemize}
+Three future tests would discriminate the remaining claims: evaluate frozen protocols across new rolling periods; compare validation RMSE and surrogate rankings using predictions excluded from fitting; and compare losses under matched family, initialization, training budget, selection rule, and seed count. These tests are proposed, not performed in this report.
+
+\section{Conclusions}
+Failure analysis showed that pointwise error did not reliably rank the realized value of the saved scheduling candidates. Starting from the legal action set, we expressed this mismatch through invariance and action-contrast regret, reformulated the learning objective, and implemented a block/listwise surrogate with frozen curve averaging. The protocol realizes 6693.88 against 6214.36 on the specified period, an observed gain of 479.51. Its concentration, downside, and uncertainty are integral to that result. The general lesson is to design and evaluate learning around the decisions and constraints it serves, while separating a plausible mechanism, a realized outcome, and evidence of future improvement.
+\FloatBarrier
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+\renewcommand{\arraystretch}{1.04}
+\setlength{\textfloatsep}{9pt}
+\setlength{\intextsep}{9pt}
+\section{Prediction Provenance and Derived Evidence}\label{app:provenance}
+\input{tables/provenance.tex}
+The v2 Transformer settlement of 6214.36 belongs to the saved curve with RMSE 0.682788, not the historical entry 0.630545. The report pairs both axes with the same curve. Recomputed fields are separately named; the historical tables and protected Phase B metrics remain unchanged.
+
+Exact oracle-window index matching is not a sufficient value diagnostic because several windows can tie. The reason is a property of the target series: 42.09\% of adjacent slot pairs carry identical prices, the median day holds only 35 distinct values across its 96 slots, and the flattest day holds 15. Constant stretches longer than the eight-slot block make different window indices produce identical block sums, hence identical settlements. Value matching within numerical tolerance occurs on five days for the headline and three for the reference. Those counts contradict interpreting a zero match rate for one chosen oracle index as zero optimal-value days. The same property explains the paired ties: of the 14 tied days, only 3 use the same window as the reference and 11 use a different window that settles to the same value. Average ranks are used for window Spearman diagnostics; the solver and hard-label argmax retain their respective deterministic tie rules. Idle remains available even though it is not selected in the headline/reference records; actual losses can still occur when predicted opportunities are positive.
+\input{tables/correlations.tex}
+\input{tables/bootstrap.tex}
+\FloatBarrier
+
+\section{Reproduction and Evidence Map}
+\small
+Both language packages share English vector figures, derived records, and equations. Python draws all quantitative figures from actual CSV/JSON records; the method diagram is conceptual. The report and audit scripts were prepared with AI assistance from the project's recorded experiments.
+
+\begin{itemize}\small\raggedright
+\item \textbf{Compile:} upload the ZIP to Overleaf, set \path{main.tex} as the main file, and select XeLaTeX. Edit \path{author.tex} for author information.
+\item \textbf{Redraw:} install \path{scripts/requirements.txt} and run \texttt{python} \path{scripts/build_figures.py}. This reads packaged records and fits no model.
+\item \textbf{Recompute and trace:} \path{scripts/derive_records.py} requires the original repository; its commands are in \path{README.md}. \path{data/source_manifest.json} records exact source paths, SHA-256 hashes, and dependency versions. \path{data/analysis_plan.json} documents retrospective choices, not prospective preregistration.
+\end{itemize}
+
+\paragraph{Scope of verification.}
+Verification has three levels: saved curves support replayed settlements and errors; historical controls have their own saved curves; val30 aggregates can only be traced to per-epoch logs. Missing val30 curves prevent a claim of independently reproduced validation settlements.
+
+\begin{itemize}\small\raggedright
+\item All 62 frozen prediction curves share one timestamp index and one target vector; for each curve the saved action is checked for legality, the saved predicted score is checked against the solver optimum, and the settled and oracle scores are recomputed day by day.
+\item Headline 6693.875025 and reference 6214.361782 are reproduced from the curves, and the decomposition identity in Equation~\eqref{eq:decomp} is asserted on unrounded values.
+\item The win/tie/loss tally is asserted to cover all 59 days, and the tie split into same-window and equal-value-different-window days is asserted to match the tie count.
+\item Six historical RMSE entries that disagree with their settled curve are retained side by side in Table~\ref{tab:provenance}; no original leaderboard column is rewritten.
+\item Every tracked source file is hashed before and after the analysis, and the run fails if any input changed while it executed.
+\end{itemize}
+
+These checks establish internal consistency and provenance. They do not, and cannot, establish that the reported period-specific gain transfers to a new evaluation period; that claim needs the rolling-period test described in Section~7.2.
+\end{document}

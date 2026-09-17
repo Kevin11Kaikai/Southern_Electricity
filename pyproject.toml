@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dispatch-value-report"
+version = "1.0.0"
+description = "From pointwise forecast error to constrained dispatch value: report, evidence records and reproduction tools"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = ["numpy>=2.0", "pandas>=2.2", "scipy>=1.13", "matplotlib>=3.8"]
+
+[project.optional-dependencies]
+audit = ["pypdf>=5.0", "pdfplumber>=0.11", "pypdfium2>=4.30", "Pillow>=10.0"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*", "experiments*"]

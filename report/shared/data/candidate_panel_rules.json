@@ -1,0 +1,31 @@
+{
+  "v1": {
+    "n_candidates": 16,
+    "protocol": "train_all_301_complete_days_then_rmse_on_last_59_holdout_days",
+    "tree_early_stopping": false,
+    "lgb_xgb_catboost_rounds": 1500,
+    "histgb_rounds": 300,
+    "early_stopping_used_for_ranking": false,
+    "ridge_alpha_fixed": 1.0,
+    "sequence_inner_val_days": 14,
+    "sequence_fit_days": 287,
+    "hyperparameter_search": "fixed settings for trees/ridge; sequence models fit 287 days and use 14 days for early stopping"
+  },
+  "v2": {
+    "n_candidates": 19,
+    "protocol": "select_on_271_30_retrain_301_score_59",
+    "selection_split": "271/30",
+    "tree_early_stopping_rounds": 100,
+    "tree_round_cap": 1500,
+    "sequence_patience": 12,
+    "sequence_max_epochs": 80,
+    "hyperparameter_search": "tuned candidates use val30 then refit on 301; fixed LightGBM baseline and weekday-slot mean are exceptions",
+    "histgb_selection": "20 to 300 iterations in steps of 20; stop after 3 unimproved validation checks; final cap 300",
+    "blend": {
+      "w_transformer": 0.75,
+      "w_lgb": 0.25
+    },
+    "blend_weight_selection": "validation RMSE grid; selected weights are fixed at evaluation"
+  },
+  "note": "Both panels are scored on the same 59 days with the same solver, but they were not produced by one selection process. They are reported separately and never pooled."
+}

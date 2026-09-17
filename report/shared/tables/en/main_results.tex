@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Main outcomes under the same 59-day evaluation and action contract.}\label{tab:main}
+\begin{tabularx}{\linewidth}{@{}Xrrrr@{}}
+\toprule
+Configuration & Predicted & Realized & $C_{\rm agg}$ & vs. ref. \\
+\midrule
+Matched LightGBM & 8402.83 & 5786.10 & 64.28\% & $-$428.26 \\
+MSE Transformer reference & 10526.88 & 6214.36 & 69.04\% & 0.00 \\
+Frozen listwise ensemble & 4778.06 & 6693.88 & 74.37\% & 479.51 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize Scores are daily means in the original scoring units. The shared oracle mean is 9000.89. Predicted values are not settlements.}
+\end{table}

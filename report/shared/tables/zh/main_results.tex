@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{相同 59 日与动作合同下的主结果。}\label{tab:main}
+\begin{tabularx}{\linewidth}{@{}Xrrrr@{}}
+\toprule
+方案 & 预测分 & 实现分 & $C_{\rm agg}$ & 对参考差 \\
+\midrule
+匹配 LightGBM 基线 & 8402.83 & 5786.10 & 64.28\% & $-$428.26 \\
+MSE Transformer 参考 & 10526.88 & 6214.36 & 69.04\% & 0.00 \\
+冻结 listwise 集成 & 4778.06 & 6693.88 & 74.37\% & 479.51 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize 所有分数均为日均原始调度分数。共同 oracle 为 9000.89；预测分与实现分分开列示，不把预测值当成结算结果。}
+\end{table}

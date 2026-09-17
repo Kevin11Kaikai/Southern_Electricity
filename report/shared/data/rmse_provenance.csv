@@ -1,0 +1,7 @@
+source,model,original_rmse,same_prediction_rmse,realized_mean
+holdout_rmse_v1,transformer_contextual,0.514318,0.5195576699847868,5637.171401873098
+holdout_rmse_v1,lstm_contextual,0.573845,0.5528080180991081,4554.389778014749
+holdout_rmse_v1,dlinear_contextual,0.655333,0.6000206874172418,5897.53712815716
+holdout_rmse_v2,transformer_contextual,0.630545,0.6827877171860671,6214.361781989832
+holdout_rmse_v2,lstm_contextual,0.528645,0.5174897636336012,5709.509962229146
+holdout_rmse_v2,blend_lgb_transformer,0.584431,0.617156514269047,6041.854269689157

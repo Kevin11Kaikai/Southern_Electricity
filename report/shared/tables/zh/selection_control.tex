@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{保持 MSE 训练、改变验证选模指标的现有对照。}\label{tab:selection}
+\begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+\toprule
+模型族 & 按 RMSE 选 & 按实现分选 & 差值 \\
+\midrule
+Transformer & 6130.30 & 6134.30 & 3.99 \\
+LSTM & 5869.19 & 5840.46 & $-$28.72 \\
+DLinear & 6186.44 & 6186.44 & 0.00 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize 来源为保存的对照实验；这些参考不是表~\ref{tab:main} 中所有历史模型的重新训练版本。}
+\end{table}

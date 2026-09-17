@@ -1,0 +1,149 @@
+% Shared by both language editions. Equations describe actual code unless marked physical extension.
+\newcommand{\EqPoint}{%
+\begin{equation}\label{eq:point}
+\begin{aligned}
+\underset{h,\theta}{\operatorname{minimize}}\quad&
+\mathbb E\!\left[\frac{1}{96}\|f_{h,\theta}(X)-A\|_2^2\right]\\
+\text{subject to}\quad&h\in\mathcal H,\qquad \theta\in\Theta_h,\\
+&\mathcal H=\{\text{GBDT},\text{ridge},\text{weekday-slot mean},\\
+&\qquad\ \ \text{DLinear},\text{LSTM},\text{Transformer},\text{fixed blend}\},\\
+&f_{h,\theta}(X)\text{ is }\mathcal I_{\rm dec}\text{-measurable}.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqDispatch}{%
+\begin{equation}\label{eq:dispatch}
+\begin{aligned}
+\underset{u}{\operatorname{maximize}}\quad&q^\top u,\qquad q=f_{h,\theta}(X)\\
+\text{subject to}\quad&u\in\mathcal U_{8+8},\\[-2pt]
+\mathcal U_{8+8}&=\{0\}\cup\{u^{(c,d)}:(c,d)\in\mathcal W\},\\
+\mathcal W&=\{(c,d)\in\mathbb Z^2:0\le c\le80,\ c+8\le d\le88\},\\
+u^{(c,d)}_t&=P\bigl(\mathbf1_{d\le t<d+8}-\mathbf1_{c\le t<c+8}\bigr),\quad P=1000.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqFailure}{%
+\begin{equation}\label{eq:failure}
+\begin{aligned}
+\operatorname{RMSE}(q_{\rm v1})&=0.519558<0.682788=\operatorname{RMSE}(q_{\rm v2}),\\
+\overline S(q_{\rm v1})&=5637.17<6214.36=\overline S(q_{\rm v2}).
+\end{aligned}
+\end{equation}}
+\newcommand{\EqInvariance}{%
+\begin{equation}\label{eq:invariance}
+\begin{aligned}
+\underset{u}{\operatorname{maximize}}\quad&(a q+b\mathbf1)^\top u\\
+\text{subject to}\quad&u\in\mathcal U_{8+8},\qquad a>0,
+\\[-2pt]
+&\operatorname*{arg\,max}_{u\in\mathcal U_{8+8}}(a q+b\mathbf1)^\top u
+=\operatorname*{arg\,max}_{u\in\mathcal U_{8+8}}q^\top u.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqRegret}{%
+\begin{equation}\label{eq:regretbound}
+\begin{aligned}
+R(A,q)&=A^\top(u_A-u_q)\ge0,\qquad e=A-q,\\
+\mathcal D&=\operatorname{span}\{u-v:u,v\in\mathcal U_{8+8}\},\\
+R(A,q)&\le e^\top(u_A-u_q)
+\le \|\Pi_{\mathcal D}e\|_2\,\|u_A-u_q\|_2.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqOuter}{%
+\begin{equation}\label{eq:outer}
+\begin{aligned}
+\underset{h,\theta}{\operatorname{maximize}}\quad&
+J(h,\theta)=\mathbb E\!\left[A^\top u^*(f_{h,\theta}(X))\right]\\
+\text{subject to}\quad&h\in\mathcal H,\quad\theta\in\Theta_h,\\
+&q=f_{h,\theta}(X)\text{ is }\mathcal I_{\rm dec}\text{-measurable},\\
+&u^*(q)\in\operatorname*{arg\,max}_{u\in\mathcal U_{8+8}}q^\top u.
+\end{aligned}
+\end{equation}
+\begin{equation}\label{eq:outerregret}
+\begin{aligned}
+\underset{h,\theta}{\operatorname{minimize}}\quad&
+\mathbb E\!\left[\max_{u\in\mathcal U_{8+8}}A^\top u-A^\top u^*(f_{h,\theta}(X))\right]\\
+\text{subject to}\quad&(h,\theta,q,u^*)\text{ satisfy the constraints in (\ref{eq:outer}).}
+\end{aligned}
+\end{equation}}
+\newcommand{\EqBayes}{%
+\begin{equation}\label{eq:bayes}
+\mu(X)=\mathbb E[A\mid X],\qquad
+\mathbb E[A^\top u\mid X]=\mu(X)^\top u
+\quad(u\text{ is }\sigma(X)\text{-measurable}).
+\end{equation}}
+\newcommand{\EqPhysical}{%
+\begin{equation}\label{eq:physical}
+\begin{aligned}
+\underset{c,d,s}{\operatorname{maximize}}\quad&\sum_{t=0}^{95}q_t(d_t-c_t)\Delta t\\
+\text{subject to}\quad&s_{t+1}=s_t+\frac{\Delta t}{E_{\max}}\left(\eta_c c_t-\frac{d_t}{\eta_d}\right),\\
+&0.1\le s_t\le0.9\quad(t=0,\ldots,96),\qquad s_0=s_{\rm init},\\
+&0\le c_t\le P_c,\quad0\le d_t\le P_d,\quad c_td_t=0,\\
+&d-c\in\mathcal U_{8+8}^{\rm phys},\qquad\Delta t=0.25\ {\rm h}.
+\end{aligned}
+\end{equation}
+\begin{equation}\label{eq:intersection}
+\mathcal U_{\rm deploy}=\mathcal U_{\rm strategy}\cap\mathcal U_{\rm battery}.
+\end{equation}}
+\newcommand{\EqBlocks}{%
+\begin{equation}\label{eq:blocks}
+C=I-\frac{\mathbf1\mathbf1^\top}{96},\quad
+(Bq)_j=\sum_{t=j}^{j+7}q_t\ (0\le j\le88),\quad
+g_{(c,d)}(q)=(BCq)_d-(BCq)_c.
+\end{equation}
+\begin{equation}\label{eq:blockbound}
+(u^{(c,d)})^\top q=P\,g_{(c,d)}(q),\qquad
+R(A,q)\le4P\|BC(A-q)\|_\infty.
+\end{equation}}
+\newcommand{\EqHardLoss}{%
+\begin{equation}\label{eq:hardloss}
+\begin{aligned}
+L_{\rm block}(q,A)&=\frac1{89}\|BCq-BCA\|_2^2,\\
+\pi_w(q;\tau)&=\frac{\exp(g_w(q)/\tau)}{\sum_{v\in\mathcal W}\exp(g_v(q)/\tau)},\\
+L_{\rm hard}(q,A)&=L_{\rm block}(q,A)-\lambda\log\pi_{w_A}(q;\tau),\quad
+w_A\in\operatorname*{arg\,max}_{w\in\mathcal W}g_w(A).
+\end{aligned}
+\end{equation}}
+\newcommand{\EqListwise}{%
+\begin{equation}\label{eq:listwise}
+\begin{aligned}
+p_w(A)&=\frac{\exp(g_w(A)/\tau_{\rm tgt})}{\sum_{v\in\mathcal W}\exp(g_v(A)/\tau_{\rm tgt})},\\
+L_{\rm list}(q,A)&=L_{\rm block}(q,A)
+-\lambda\sum_{w\in\mathcal W}p_w(A)\log\pi_w(q;\tau_{\rm pred}),\\
+\underset{\theta}{\operatorname{minimize}}\quad&\frac1{N_{\rm train}}\sum_{i\in\mathcal T}L_{\rm list}(f_{h,\theta}(X_i),A_i)\\
+\text{subject to}\quad&h=\text{Transformer},\quad\theta\in\Theta_h,\\
+&\lambda=2,\quad\tau_{\rm tgt}=0.05,\quad\tau_{\rm pred}=0.10.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqMean}{%
+\begin{equation}\label{eq:mean}
+\bar q=\frac15\sum_{k=42}^{46}f_{\theta_k}(X),\qquad
+\bar q^\top u=\frac15\sum_{k=42}^{46}f_{\theta_k}(X)^\top u,\qquad
+u_{\rm ens}=u^*(\bar q).
+\end{equation}}
+\newcommand{\EqCapture}{%
+\begin{equation}\label{eq:capture}
+\begin{aligned}
+S_i&=A_i^\top u_i,\quad O_i=\max_{u\in\mathcal U_{8+8}}A_i^\top u,\\
+C_{\rm day}&=\frac1N\sum_i\frac{S_i}{O_i},\qquad
+C_{\rm agg}=\frac{\sum_i S_i}{\sum_i O_i}
+=\sum_i\frac{O_i}{\sum_jO_j}\frac{S_i}{O_i}.
+\end{aligned}
+\end{equation}}
+\newcommand{\EqDiagnostic}{%
+\begin{equation}\label{eq:diagnostic}
+T(q)=\frac1{59}\sum_{i=1}^{59}
+\operatorname{Spearman}\!\left((g_w(q_i))_{w\in\mathcal W},(g_w(A_i))_{w\in\mathcal W}\right).
+\end{equation}}
+\newcommand{\EqDecomposition}{%
+\begin{equation}\label{eq:decomp}
+\underbrace{6693.8750-6214.3618}_{479.5132}
+=\underbrace{6375.3549-6214.3618}_{160.9932}
++\underbrace{6693.8750-6375.3549}_{318.5201}.
+\end{equation}}
+\newcommand{\EqVariance}{%
+\begin{equation}\label{eq:variance}
+\begin{aligned}
+\operatorname{Var}\!\left(\frac1K\sum_{k=1}^{K}\varepsilon_k\right)
+&=\sigma^2\left[\rho+\frac{1-\rho}{K}\right],\\
+\operatorname{Var}(\varepsilon_k)&=\sigma^2,\qquad
+\operatorname{Corr}(\varepsilon_j,\varepsilon_k)=\rho\ (j\ne k).
+\end{aligned}
+\end{equation}}

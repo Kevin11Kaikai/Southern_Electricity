@@ -1,0 +1,221 @@
+{
+  "status": "completed",
+  "method": "Rendered every fresh-ZIP-compiled page at 1.8x and manually viewed all 17 two-page contact images; automated bounds/glyph/reference scans are separate.",
+  "general_findings": "No visible clipping, overlaps, missing glyphs, replacement characters, unresolved references, overflowing tables, cross-appendix floats, or isolated final page. Ordinary paragraph continuations around floats remain.",
+  "languages": {
+    "zh": {
+      "fresh_zip_pdf_sha256": "8b59dcd64ab5aa15d4ccb14ae3b985b08a31502c7eb9953c6e0e3fd5c6fdcc4f",
+      "pages": [
+        {
+          "page": 1,
+          "viewed": true,
+          "render_sha256": "97c478fe10485d1029183d937405fdb61043491fe068b82892a6e05e950cb344",
+          "note": "标题、摘要、简介与相关工作：加粗结果的限制语同段可见。"
+        },
+        {
+          "page": 2,
+          "viewed": true,
+          "render_sha256": "82c4f01842494fa483a02a4ee3256c728ac91a5bc5186c7418fff1478a633dad",
+          "note": "问题设置式1/2及预测规则空间：公式与正文完整。"
+        },
+        {
+          "page": 3,
+          "viewed": true,
+          "render_sha256": "d7e71852fae5659b55b47653cb1a5f06755c344ba195a16f38ad99eeaeba98f6",
+          "note": "失败实例、不变性、遗憾界、外层目标：无裁切。"
+        },
+        {
+          "page": 4,
+          "viewed": true,
+          "render_sha256": "eacf0767d979898b10082f199cdb1e644961611a1bb9671c1f1b252f4a96ea14",
+          "note": "条件均值、SOC、方法开头：符号与编号可读。"
+        },
+        {
+          "page": 5,
+          "viewed": true,
+          "render_sha256": "7eba4804a111a9f339be5e5e9a32972184b31e7dd8385a541ed20e335fefe915",
+          "note": "英文方法图、式13：信息流、图注与正文无重叠。"
+        },
+        {
+          "page": 6,
+          "viewed": true,
+          "render_sha256": "b640c6a388ee18a94d80ec49f82beb0574fcccfa1532aa310f19f334a9fc52de",
+          "note": "式14/15与数据角色表：列宽、中文字符正常。"
+        },
+        {
+          "page": 7,
+          "viewed": true,
+          "render_sha256": "711dba010fef1d1693c5922096b33a71ee3272eaae37f4023ecb6766d8d29cd6",
+          "note": "拟合规则、capture、表2/3：表2后段落连续。"
+        },
+        {
+          "page": 8,
+          "viewed": true,
+          "render_sha256": "b02389114cc531d11a1e5569f1e484cdbf4a7df990e2222d222c26170a435524",
+          "note": "比较问题表4与统计范围：加粗条件与数字完整。"
+        },
+        {
+          "page": 9,
+          "viewed": true,
+          "render_sha256": "6b1d92cb5b19e9a9a5d41180cc0fd1ea1a98d913b3039e3abc98c4299b78e9b9",
+          "note": "RMSE四面板、R2公式及解释：图标、坐标和图注清晰。"
+        },
+        {
+          "page": 10,
+          "viewed": true,
+          "render_sha256": "6e277551059afa19bb610c508083dc546abc77a43bf2b938c89f0e2718039d47",
+          "note": "代理/T四面板、主结果表：图表未溢出。"
+        },
+        {
+          "page": 11,
+          "viewed": true,
+          "render_sha256": "511a6417f4437ce734d3cb2c6d2c6959ee2e2f4336b1a45e67ee3e4103e8f110",
+          "note": "主结果图、配对统计与下行解释：CI跨零可见。"
+        },
+        {
+          "page": 12,
+          "viewed": true,
+          "render_sha256": "3f29019cf13dccdaddd8537720026a58242168320dfd24b0c92ac9fe6457b25e",
+          "note": "逐日差图、分解公式、表7/8：最大落后日注释无碰撞。"
+        },
+        {
+          "page": 13,
+          "viewed": true,
+          "render_sha256": "cb9790eef825a019e02843452c283dd776b5a10b7dac88a67dcb57c71eca34ca",
+          "note": "种子图、对照解释、式19：非因果限定可见。"
+        },
+        {
+          "page": 14,
+          "viewed": true,
+          "render_sha256": "b2f6f9b14bfec604e280f9643db3834d709e632e0ccc9ab300421d4a8d570631",
+          "note": "局限、结论与参考文献：无缺字或重叠。"
+        },
+        {
+          "page": 15,
+          "viewed": true,
+          "render_sha256": "aef2982321dca9dbdb0df4427f548e440977cb899e63a8cca87b01b926445ec5",
+          "note": "附录A表9/10：RMSE来源和条件区间列完整。"
+        },
+        {
+          "page": 16,
+          "viewed": true,
+          "render_sha256": "41262423fa1aa89623cb573dfa5478d98ae2e40630d358760dbf15e64cb59059",
+          "note": "表11在附录B标题之前；复现方法与核验范围成段，无孤立尾页。"
+        }
+      ]
+    },
+    "en": {
+      "fresh_zip_pdf_sha256": "2403b7a7d382183e8ec2ded511098ff0dd7ec6bc3e3765066e3ad68b863cd9eb",
+      "pages": [
+        {
+          "page": 1,
+          "viewed": true,
+          "render_sha256": "609e49cc481595704529ca0a49ae1096192cbd7249dac5165af4b8bc82449cd5",
+          "note": "Title/abstract/introduction: observation and limitations visible together."
+        },
+        {
+          "page": 2,
+          "viewed": true,
+          "render_sha256": "b8d601ef9a2d7df99ddd93f85cc631d541c2dd2a826c2e7f77babe422d7e12ad",
+          "note": "Related work and Eq1: prediction rules and blend explanation legible."
+        },
+        {
+          "page": 3,
+          "viewed": true,
+          "render_sha256": "ac840c40e2dbf535c3fbd469d1c50989a871a5c084cb50c31460b0d92564ede3",
+          "note": "Contract/failure/invariance: equations within margins."
+        },
+        {
+          "page": 4,
+          "viewed": true,
+          "render_sha256": "1534d17939c2b2d03cf788b447e348ffea1bb08a28c7b8d30f52876ec46af119",
+          "note": "Projection regret/outer objective/conditional mean: complete symbols and numbering."
+        },
+        {
+          "page": 5,
+          "viewed": true,
+          "render_sha256": "e228a4356cace4ca7bcd5a3bc19f32a21a59223ba56f67ab7c54d46d4731dfd2",
+          "note": "SOC model and block mapping/hard CE: equations and units intact."
+        },
+        {
+          "page": 6,
+          "viewed": true,
+          "render_sha256": "5e93d58e2f335c8b2e364cb528eaea57091ac187c1487b030c64d2ee96429132",
+          "note": "Method diagram and soft loss: arrows/caption/training boundary readable."
+        },
+        {
+          "page": 7,
+          "viewed": true,
+          "render_sha256": "ddf3a64b59168c27fdb180cd46d45966e13c589c1141bbbfe4189ce69f0ccd45",
+          "note": "Ensemble and data table: no clipping or displaced setup heading."
+        },
+        {
+          "page": 8,
+          "viewed": true,
+          "render_sha256": "fcf91ce1f98ef84e9e79a9bc77dafdedd62f0d9c0e5e8e9989e1bad67015eef8",
+          "note": "Capture table and selection explanation: paragraph kept together after table2."
+        },
+        {
+          "page": 9,
+          "viewed": true,
+          "render_sha256": "64e6367b2b9cffeba4080662d455ff5683208c25c43238c54203b6da494c6007",
+          "note": "Comparison table4/statistical scope/R1: fixed-candidate caveat prominent."
+        },
+        {
+          "page": 10,
+          "viewed": true,
+          "render_sha256": "86cf7a8dab98059dcebe004be0abfaaefcc86c1b6c86548b9592f75e258b3b2a",
+          "note": "RMSE panels and takeaway: axes, markers and conditional scope visible."
+        },
+        {
+          "page": 11,
+          "viewed": true,
+          "render_sha256": "31435690cd76956eed6c43178207d587988cd967c87499c3ec0630b38c409793",
+          "note": "Proxy versus T panels: actual loss retained and amplitude controls explained."
+        },
+        {
+          "page": 12,
+          "viewed": true,
+          "render_sha256": "232a095894c9901fab8ae0bc406dbdac3fec2494310b74b8de91e7a2dd573218",
+          "note": "R2 scope/main table/score plot: labels and zero-crossing interval legible."
+        },
+        {
+          "page": 13,
+          "viewed": true,
+          "render_sha256": "858a70d5ab21a950f80445b3b4f717a27f9d8a8c92222c18a9c9d3fc129ba58a",
+          "note": "Paired evidence and daily-gain figure: annotations do not collide."
+        },
+        {
+          "page": 14,
+          "viewed": true,
+          "render_sha256": "7006bd1faa9467ab06f8b9c34d555f09d6e1807bb2043d6552fdad3fb89368e9",
+          "note": "Downside, arithmetic decomposition, seed figure: rounded identity explained."
+        },
+        {
+          "page": 15,
+          "viewed": true,
+          "render_sha256": "adafcb065eff4358b423a14eb24527d6b3e2dc03a9dc10ce09d2d8da423d50ac",
+          "note": "Selection controls/variance formula/limitations: no overflow."
+        },
+        {
+          "page": 16,
+          "viewed": true,
+          "render_sha256": "c228e2b4e0d4a610cd836b02269bd0ca3937c0383df28b90e73a59769dc5c8f2",
+          "note": "Remaining limits, conclusion, references: no stronger concluding claim."
+        },
+        {
+          "page": 17,
+          "viewed": true,
+          "render_sha256": "dd7aeea355847fb25c4c8f3d654b176548d122bec8f63eb3c4e92a2d5014a619",
+          "note": "Appendix A provenance/correlation tables: column alignment and negative signs correct."
+        },
+        {
+          "page": 18,
+          "viewed": true,
+          "render_sha256": "9f0e1a7a89696a67efecf2c9b19c0077db0e406d1b87af8c8f76c430c6835210",
+          "note": "Table11 precedes Appendix B; reproduction and scope share the page, no isolated tail."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "candidate": "lgb_baseline",
+    "score": 5786.1008710125425,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "nb11_v2_transformer",
+    "score": 6214.361781989832,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "nb11_v2_ridge",
+    "score": 6202.841477641694,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "nb11_v1_transformer",
+    "score": 5637.171401873099,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "nb11_v1_lstm",
+    "score": 4554.389778014749,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "cursor_original_transformer",
+    "score": 6213.626563877091,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "cursor_original_lstm",
+    "score": 6301.331964649514,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "cursor_original_dlinear",
+    "score": 5537.905309633621,
+    "final_epochs": null,
+    "best_epoch": null
+  },
+  {
+    "candidate": "codex_soft_regret_transformer_realized",
+    "score": 6170.572762761753,
+    "final_epochs": 2,
+    "best_epoch": 2
+  },
+  {
+    "candidate": "codex_soft_regret_lstm_realized",
+    "score": 6485.729034957,
+    "final_epochs": 36,
+    "best_epoch": 32
+  },
+  {
+    "candidate": "codex_soft_regret_dlinear_realized",
+    "score": 5135.055607213882,
+    "final_epochs": 62,
+    "best_epoch": 56
+  },
+  {
+    "candidate": "codex_cursor_ce_transformer_realized",
+    "score": 6570.706822364337,
+    "final_epochs": 29,
+    "best_epoch": 26
+  },
+  {
+    "candidate": "codex_cursor_ce_lstm_realized",
+    "score": 6163.541306044665,
+    "final_epochs": 34,
+    "best_epoch": 31
+  },
+  {
+    "candidate": "codex_cursor_ce_dlinear_realized",
+    "score": 5537.905309633621,
+    "final_epochs": 26,
+    "best_epoch": 23
+  },
+  {
+    "candidate": "codex_mse_transformer_realized",
+    "score": 6134.299468228066,
+    "final_epochs": 18,
+    "best_epoch": 16
+  },
+  {
+    "candidate": "codex_mse_transformer_rmse",
+    "score": 6130.304864030927,
+    "final_epochs": 21,
+    "best_epoch": 19
+  },
+  {
+    "candidate": "codex_mse_lstm_realized",
+    "score": 5840.463442874529,
+    "final_epochs": 20,
+    "best_epoch": 18
+  },
+  {
+    "candidate": "codex_mse_lstm_rmse",
+    "score": 5869.186826554424,
+    "final_epochs": 7,
+    "best_epoch": 6
+  },
+  {
+    "candidate": "codex_mse_dlinear_realized",
+    "score": 6186.444630889453,
+    "final_epochs": 7,
+    "best_epoch": 6
+  },
+  {
+    "candidate": "codex_mse_dlinear_rmse",
+    "score": 6186.444630889453,
+    "final_epochs": 7,
+    "best_epoch": 6
+  }
+]

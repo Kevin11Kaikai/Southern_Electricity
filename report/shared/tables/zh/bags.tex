@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{固定角色的集成分解；按方案角色排列，不据此重选 headline。}\label{tab:bags}
+\begin{tabularx}{\linewidth}{@{}Xrrrr@{}}
+\toprule
+配方 & 单种子均值 & 种子 SD & 曲线平均 & 集成增量 \\
+\midrule
+Window CE / LSTM & 6050.11 & 242.75 & 6114.31 & 64.20 \\
+Listwise / Transformer & 6375.35 & 118.80 & 6693.88 & 318.52 \\
+SPO+ / LSTM & 6431.25 & 115.84 & 6476.01 & 44.76 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize 每条配方均为种子 42--46。单种子 SD 描述这五次训练的离散度，不是时间泛化误差。}
+\end{table}

@@ -1,0 +1,17 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{历史 RMSE 与实际结算曲线的 RMSE：保留原表，新增同源复算。}\label{tab:provenance}
+\begin{tabularx}{\linewidth}{@{}lXrrr@{}}
+\toprule
+组 & 模型 & 历史表 & 同源复算 & 实现分 \\
+\midrule
+v1 & \texttt{transformer\_contextual} & 0.514318 & 0.519558 & 5637.17 \\
+v1 & \texttt{lstm\_contextual} & 0.573845 & 0.552808 & 4554.39 \\
+v1 & \texttt{dlinear\_contextual} & 0.655333 & 0.600021 & 5897.54 \\
+v2 & \texttt{transformer\_contextual} & 0.630545 & 0.682788 & 6214.36 \\
+v2 & \texttt{lstm\_contextual} & 0.528645 & 0.517490 & 5709.51 \\
+v2 & \texttt{blend\_lgb\_transformer} & 0.584431 & 0.617157 & 6041.85 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize 本表不覆盖任何原始 RMSE/MAE 字段。其他点模型在 $10^{-5}$ 容差内吻合。}
+\end{table}

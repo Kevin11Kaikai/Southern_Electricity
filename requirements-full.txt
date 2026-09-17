@@ -1,0 +1,11 @@
+# Only needed to re-run the experiments themselves after obtaining the source
+# data (see DATA.md). Not required to rebuild the report.
+-r requirements.txt
+pyarrow>=16
+scikit-learn>=1.4
+torch>=2.2
+lightgbm>=4.3
+xgboost>=2.0
+catboost>=1.2
+netCDF4>=1.6         # only for the `full` feature set; the headline model does not use weather
+xarray>=2024.0       # only for the `full` feature set

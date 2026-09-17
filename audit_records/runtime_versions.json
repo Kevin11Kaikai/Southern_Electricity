@@ -1,0 +1,15 @@
+{
+  "python": "3.11.15 | packaged by Anaconda, Inc. | (main, Jun 11 2026, 15:12:53) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "<python-env>\\envs\\south_grid\\python.exe",
+  "packages": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.5",
+    "scipy": "1.17.1",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.1",
+    "pypdf": "6.18.1",
+    "pdfplumber": "0.11.10",
+    "pypdfium2": "5.13.0",
+    "Pillow": "12.3.0"
+  }
+}

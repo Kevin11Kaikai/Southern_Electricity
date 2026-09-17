@@ -1,0 +1,19 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Across-candidate associations and shared day-resampling intervals.}\label{tab:corr}
+\begin{tabularx}{\linewidth}{@{}lXrcrc@{}}
+\toprule
+Set & Metric & $r$ & 95\% interval & $\rho$ & 95\% interval \\
+\midrule
+v1 & RMSE & 0.351 & [$-$0.171, 0.535] & 0.482 & [$-$0.303, 0.638] \\
+v1 & Centered RMSE & 0.252 & [$-$0.152, 0.382] & 0.391 & [$-$0.238, 0.559] \\
+v1 & Listwise proxy & 0.320 & [$-$0.241, 0.485] & 0.374 & [$-$0.338, 0.553] \\
+v1 & Window rank $T$ & 0.849 & [0.472, 0.881] & 0.612 & [0.200, 0.812] \\
+v2 & RMSE & 0.005 & [$-$0.438, 0.333] & 0.082 & [$-$0.474, 0.321] \\
+v2 & Centered RMSE & $-$0.108 & [$-$0.488, 0.203] & $-$0.035 & [$-$0.484, 0.233] \\
+v2 & Listwise proxy & $-$0.165 & [$-$0.518, 0.124] & $-$0.039 & [$-$0.460, 0.093] \\
+v2 & Window rank $T$ & 0.777 & [0.197, 0.852] & 0.656 & [0.135, 0.814] \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize $r$: Pearson; $\rho$: across-candidate Spearman. $T$ separately uses within-day Spearman. Percentile intervals: 7-day blocks, 10,000 replicates, dates resampled and candidates fixed. They exclude candidate-search and candidate-sampling uncertainty.}
+\end{table}

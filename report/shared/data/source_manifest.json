@@ -1,0 +1,221 @@
+{
+  "sources": [
+    {
+      "path": "reports/holdout_rmse_v1/predictions.parquet",
+      "sha256": "8b33e877a9c83a276964d706cfb2fcf09463a214cb03fd9fe093f9de2496c805",
+      "bytes": 817360
+    },
+    {
+      "path": "reports/holdout_rmse_v1/dispatch_daily.csv",
+      "sha256": "20b962956d539fec4dfd3d5f2704ddc3807a97d0e0eaa50bc36c823932966b1f",
+      "bytes": 166519
+    },
+    {
+      "path": "reports/holdout_rmse_v1/leaderboard.csv",
+      "sha256": "e66901c09eb320bd7647d7f75bfedbdc3b6ae17182f0ff7a482bfa66cc9718ad",
+      "bytes": 1850
+    },
+    {
+      "path": "reports/holdout_rmse_v2/predictions.parquet",
+      "sha256": "44417e097828a6ce8e0f19d01acc840b731ab21e05a591a3441127112343305d",
+      "bytes": 930282
+    },
+    {
+      "path": "reports/holdout_rmse_v2/dispatch_daily.csv",
+      "sha256": "c4f6db46d7c666e7195a6517bbd10f136e92e5d750f020e4c9cd78b29b8e51fc",
+      "bytes": 197910
+    },
+    {
+      "path": "reports/holdout_rmse_v2/leaderboard.csv",
+      "sha256": "7e69e89839847a182b410771f037eca0a0dce5736d33e814458c23ff823c5f8c",
+      "bytes": 2468
+    },
+    {
+      "path": "reports/holdout_seed_bag_v1/predictions.parquet",
+      "sha256": "3f15e88c0ba3d7309ed1d0e3db4a006c4509ae52836ed8ee395af0e84d05ee75",
+      "bytes": 912305
+    },
+    {
+      "path": "reports/holdout_seed_bag_v1/dispatch_daily.csv",
+      "sha256": "de03e9432b4a2215eac8275c9108873ead35099e01086d20d7d56e028a81e36f",
+      "bytes": 232101
+    },
+    {
+      "path": "reports/holdout_seed_bag_v1/leaderboard.csv",
+      "sha256": "2a75accf0bf1a18a73799c570e1aa3d76495cf56388a4ce74238ce5634e20c7c",
+      "bytes": 6886
+    },
+    {
+      "path": "reports/holdout_dispatch_loss_v1/predictions.parquet",
+      "sha256": "fd6979313375040a3583badaad180f76eda7b7cbf8cba1add85b70275d0d7190",
+      "bytes": 196524
+    },
+    {
+      "path": "reports/holdout_dispatch_loss_v1/dispatch_daily.csv",
+      "sha256": "83b5a06b277cb0e4bcc98f58395130c7c6bc010c34228c554ba8c256ee605736",
+      "bytes": 31185
+    },
+    {
+      "path": "reports/holdout_dispatch_loss_v1/leaderboard.csv",
+      "sha256": "8d0d8cb8895c10d8131711a5f0dcb9506982a8408cad4d03d47d04f013edc7bb",
+      "bytes": 637
+    },
+    {
+      "path": "reports/holdout_dfl_bakeoff_v1/predictions.parquet",
+      "sha256": "ebbd13defe7881be6b22b98e11f48653d003f54f3e07809b84d9dbea58f0a6a6",
+      "bytes": 283675
+    },
+    {
+      "path": "reports/holdout_dfl_bakeoff_v1/dispatch_daily.csv",
+      "sha256": "473eba24325e9ed948a95b2e1214e67cebb0ca01401eefb08cbfd0560bda801a",
+      "bytes": 50710
+    },
+    {
+      "path": "reports/holdout_dfl_bakeoff_v1/leaderboard.csv",
+      "sha256": "ed44db607c1f3896409d49a0a9362488f201e1e144a4c76deb8b9e3f3457a965",
+      "bytes": 1055
+    },
+    {
+      "path": "reports/holdout_rmse_v1/manifest.json",
+      "sha256": "1717325514b28d0ffb1063a8512666ba2263e5f39673ee38b2a60f251539163a",
+      "bytes": 2093
+    },
+    {
+      "path": "reports/holdout_rmse_v2/manifest.json",
+      "sha256": "a0e18e2fbe03641f9eb9456c9868dcaf6df348d6a82a31cd98aa2867fed4336d",
+      "bytes": 2127
+    },
+    {
+      "path": "reports/holdout_dispatch_loss_codex_v1/runs/20260914T221004Z/comparison_zh.csv",
+      "sha256": "0c189434f0de7cb5f705e3e0308db30fca18348b8d6c7b5e68c526110c669732",
+      "bytes": 2445
+    },
+    {
+      "path": "reports/holdout_dispatch_loss_codex_v1/runs/20260914T221004Z/comparison.csv",
+      "sha256": "117e2d685c035e0231be80238d0daf6f91b5d9b950ba446c75186295009bb282",
+      "bytes": 9382
+    },
+    {
+      "path": "reports/holdout_dfl_ltr_v1/grid_runs.json",
+      "sha256": "fb9362a822df99f113de51afada69e7ff15603d2b66608023304ff93e7659e60",
+      "bytes": 1380449
+    },
+    {
+      "path": "reports/holdout_seed_bag_v1/manifest.json",
+      "sha256": "abfa46f940c0a607346b1aae8176a7981acef34946534ad6d7bbe4a801f29b6b",
+      "bytes": 2950
+    },
+    {
+      "path": "reports/holdout_dfl_ltr_v1/selection.json",
+      "sha256": "237e6a36ef9a8decbf878051c7a93c1beae6c9285f4f8548a62da4919fae6dd5",
+      "bytes": 68993
+    },
+    {
+      "path": "reports/holdout_rmse_v1/dispatch_replay_manifest.json",
+      "sha256": "27da084f9a132ec97bf6908c3b3a7463c10e3855a70174c54cc87f67c5886cc1",
+      "bytes": 2841
+    },
+    {
+      "path": "reports/holdout_rmse_v2/dispatch_replay_manifest.json",
+      "sha256": "f9827ea9a07641f5db1645d33618faffcb9c10a64509b6bbf19ee28addba8d69",
+      "bytes": 3610
+    },
+    {
+      "path": "reports/phase_b/final_metrics.json",
+      "sha256": "ba7b25d17cad1f843984fad991211b9d92618a4672e24b641c01434cd0796728",
+      "bytes": 8403
+    },
+    {
+      "path": "reports/phase_b/MODEL_CARD.md",
+      "sha256": "167b4f0af105e585c60fa012964de865fa562b2e93c5467e40cc792f97d5a4bd",
+      "bytes": 3433
+    },
+    {
+      "path": "experiments/holdout_dispatch_loss_v1/loss.py",
+      "sha256": "53ae52f8c2781ca0f6ebe84d27bcd896adc4682156dd151623884d64d57702e5",
+      "bytes": 3998
+    },
+    {
+      "path": "experiments/holdout_dfl_ltr_v1/loss.py",
+      "sha256": "6bae31cbf318530f472211f3d0a4ffddaf6779ac89080a8052e2d016877f1ad7",
+      "bytes": 10776
+    },
+    {
+      "path": "experiments/holdout_seed_bag_v1/run.py",
+      "sha256": "59ab959dd4fbf72fd1a322837af7e54235546e780e798ae026e4c65fb4aab57d",
+      "bytes": 19039
+    },
+    {
+      "path": "experiments/holdout_seed_bag_v1/combine.py",
+      "sha256": "188f093d44e9fcc06fa89be80d72fc3e3d201f7eec0027fecec8ca2918d5139f",
+      "bytes": 2609
+    },
+    {
+      "path": "experiments/holdout_dispatch_replay/run.py",
+      "sha256": "f710acdd525767a0cc28557aa600b3049c601f357ae225818d8ad4d5df086254",
+      "bytes": 16005
+    },
+    {
+      "path": "experiments/holdout_dispatch_replay/fit.py",
+      "sha256": "039a865f38d737c84df62ce48853de38353e0d9663ca1c2e5e3153ae2b736514",
+      "bytes": 22443
+    },
+    {
+      "path": "src/phase_b/dispatch.py",
+      "sha256": "dc55230bf5e3d6e93cbe7592ec67d5f50f2e869b5d6e7c6b80eeb98d1d96cc19",
+      "bytes": 8156
+    },
+    {
+      "path": "src/phase_b/contracts.py",
+      "sha256": "8d0fb85bb1004684d305360918818edce538f1f6e78b160465dd6441c811bf5b",
+      "bytes": 7410
+    },
+    {
+      "path": "src/phase_b/features.py",
+      "sha256": "601b5593f6c89261667a781a9fe694973ac8c4b7ab00086fd9393f66d02a97de",
+      "bytes": 8964
+    },
+    {
+      "path": "src/phase_b/experiments.py",
+      "sha256": "4fa598557c04026288a1f9137a2c015c5a56926588bb1f6238e9062efb43b4e1",
+      "bytes": 24422
+    },
+    {
+      "path": "experiments/holdout_rmse_v1/sequence_models.py",
+      "sha256": "3a03e4e988080f586963b77242feb751c7749d63db3a69c2d0c51044626042e4",
+      "bytes": 10358
+    },
+    {
+      "path": "experiments/holdout_rmse_v1/run.py",
+      "sha256": "8fc4214fc32785d6e86d051469b7dd43bc233b5fca5ed2ce2ab7981c0fd1a90b",
+      "bytes": 21845
+    },
+    {
+      "path": "experiments/holdout_rmse_v2/run.py",
+      "sha256": "b94ca01552b969090a41d0bd937680d27f2b4706d78f179894f55c6e6a745752",
+      "bytes": 33734
+    },
+    {
+      "path": "experiments/holdout_dfl_ltr_v1/run.py",
+      "sha256": "6ccf80cf858b4a66a132c2aaca3da0f1bfa4c546c65a21ea0a0122ad14425e07",
+      "bytes": 26325
+    },
+    {
+      "path": "experiments/holdout_dispatch_replay/recipes.py",
+      "sha256": "e192e1477c48ba08ca82e1df261c964eda0dc6a860f7e65229bd1e9b8c1b714d",
+      "bytes": 5161
+    }
+  ],
+  "all_inputs_unchanged_during_run": true,
+  "packages": {
+    "numpy": "2.4.6",
+    "pandas": "3.0.5",
+    "scipy": "1.17.1",
+    "pyarrow": "25.0.1"
+  },
+  "notes": [
+    "No fitting, checkpoint inference, or changes to historical result columns.",
+    "Packaged records are derived diagnostics, not raw price or feature data.",
+    "Historical leaderboard RMSE retained separately from same-prediction recomputation."
+  ]
+}

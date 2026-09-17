@@ -1,0 +1,14 @@
+\begin{table}[!htbp]
+\centering\small
+\caption{Existing control: MSE training with a changed validation selection metric.}\label{tab:selection}
+\begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+\toprule
+Family & Select by RMSE & Select by realized & Difference \\
+\midrule
+Transformer & 6130.30 & 6134.30 & 3.99 \\
+LSTM & 5869.19 & 5840.46 & $-$28.72 \\
+DLinear & 6186.44 & 6186.44 & 0.00 \\
+\bottomrule
+\end{tabularx}
+\par\vspace{3pt}{\footnotesize These are the recorded control experiment, not refits of every historical candidate in Table~\ref{tab:main}.}
+\end{table}

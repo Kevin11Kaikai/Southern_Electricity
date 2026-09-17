@@ -1,0 +1,20 @@
+{
+  "scope": "Original control job logs only; historical model states were not rerun or rehashed.",
+  "families": {
+    "dlinear": {
+      "record_count": 10,
+      "recorded_hash": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167",
+      "all_recorded_initial_hashes_equal": true
+    },
+    "lstm": {
+      "record_count": 11,
+      "recorded_hash": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645",
+      "all_recorded_initial_hashes_equal": true
+    },
+    "transformer": {
+      "record_count": 11,
+      "recorded_hash": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338",
+      "all_recorded_initial_hashes_equal": true
+    }
+  }
+}

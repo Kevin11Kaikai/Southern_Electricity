@@ -1,0 +1,46 @@
+[project]
+name = "Southern Electricity Phase B"
+seed = 42
+timezone = "Asia/Shanghai"
+
+[paths]
+train_features = "to_sais_new/to_sais_new/train/mengxi_boundary_anon_filtered.csv"
+train_labels = "to_sais_new/to_sais_new/train/mengxi_node_price_selected.csv"
+test_features = "to_sais_new/to_sais_new/test/test_in_feature_ori.csv"
+weather_dir = "to_sais_new/to_sais_new/all_nc"
+submission_template = "output_demo.csv"
+output_dir = "outputs/phase_b"
+report_dir = "reports/phase_b"
+
+[validation]
+n_splits = 5
+validation_days = 30
+holdout_days = 59
+
+[features]
+lags = [1, 2, 4, 8, 24, 48, 96, 192, 672]
+rolling_windows = [16, 96, 672]
+rolling_stats = ["mean", "std", "min", "max"]
+
+[weather]
+tile_rows = 3
+tile_cols = 3
+within_hour = "forward_fill"
+
+[model]
+learning_rate = 0.03
+num_leaves = 63
+min_child_samples = 20
+feature_fraction = 0.9
+bagging_fraction = 0.9
+bagging_freq = 1
+num_boost_round = 1500
+early_stopping_rounds = 100
+n_jobs = 4
+
+[acceptance]
+min_profit_improvement_pct = 10.0
+min_fold_wins = 4
+max_constraint_violations = 0
+max_reload_abs_diff = 1.0e-12
+

@@ -1,0 +1,4 @@
+{
+  "status": "not_executed",
+  "reason": "PyTorch is absent from the supplied south_grid environment. No package installed. Formula/code correspondence was checked by source inspection; the NumPy loss was independently recalculated on all saved curves."
+}

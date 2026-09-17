@@ -1,0 +1,14 @@
+[
+  {
+    "version": "v1",
+    "r_documented_sum": 0.8493657529573844,
+    "partial_documented_sum": 0.8240543637358435,
+    "r_round10": 0.8493910579052059
+  },
+  {
+    "version": "v2",
+    "r_documented_sum": 0.7766883444662975,
+    "partial_documented_sum": 0.7128798904539381,
+    "r_round10": 0.7766814096943122
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "operation": "posthoc_analysis_of_fixed_predictions_no_training",
+  "candidate_panels": {
+    "v1": 16,
+    "v2": 19
+  },
+  "exclusions": [],
+  "pool_versions": false,
+  "loss": "centered_block_sum_mse + 2 * listwise_cross_entropy",
+  "tau_target": 0.05,
+  "tau_prediction": 0.1,
+  "window_rank_ties": "average ranks; float64 raw 8-slot sums",
+  "bootstrap": {
+    "method": "paired circular day blocks",
+    "primary_block_length": 7,
+    "sensitivity_block_lengths": [
+      1,
+      3
+    ],
+    "replicates": 10000,
+    "seed": 20260915
+  },
+  "inference_scope": "conditional on the observed window and fixed candidates; historical selection uncorrected",
+  "float_tolerance_score": {
+    "rtol": 1e-09,
+    "atol": 1e-06
+  }
+}

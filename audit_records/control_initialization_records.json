@@ -1,0 +1,194 @@
+[
+  {
+    "job": "refit_cursor_ce_dlinear_realized_attempt1",
+    "family": "dlinear",
+    "method": "cursor_ce",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "refit_cursor_ce_lstm_realized_attempt1",
+    "family": "lstm",
+    "method": "cursor_ce",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "refit_cursor_ce_transformer_realized_attempt1",
+    "family": "transformer",
+    "method": "cursor_ce",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "refit_mse_dlinear_realized_attempt1",
+    "family": "dlinear",
+    "method": "mse",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "refit_mse_lstm_realized_attempt1",
+    "family": "lstm",
+    "method": "mse",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "refit_mse_lstm_rmse_attempt1",
+    "family": "lstm",
+    "method": "mse",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "refit_mse_transformer_realized_attempt1",
+    "family": "transformer",
+    "method": "mse",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "refit_mse_transformer_rmse_attempt1",
+    "family": "transformer",
+    "method": "mse",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "refit_soft_regret_dlinear_realized_attempt1",
+    "family": "dlinear",
+    "method": "soft_regret",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "refit_soft_regret_lstm_realized_attempt1",
+    "family": "lstm",
+    "method": "soft_regret",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "refit_soft_regret_transformer_realized_attempt1",
+    "family": "transformer",
+    "method": "soft_regret",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_cursor_ce_dlinear_0_attempt1",
+    "family": "dlinear",
+    "method": "cursor_ce",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_cursor_ce_dlinear_1_attempt1",
+    "family": "dlinear",
+    "method": "cursor_ce",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_cursor_ce_dlinear_2_attempt1",
+    "family": "dlinear",
+    "method": "cursor_ce",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_cursor_ce_lstm_0_attempt1",
+    "family": "lstm",
+    "method": "cursor_ce",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_cursor_ce_lstm_1_attempt1",
+    "family": "lstm",
+    "method": "cursor_ce",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_cursor_ce_lstm_2_attempt1",
+    "family": "lstm",
+    "method": "cursor_ce",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_cursor_ce_transformer_0_attempt1",
+    "family": "transformer",
+    "method": "cursor_ce",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_cursor_ce_transformer_1_attempt1",
+    "family": "transformer",
+    "method": "cursor_ce",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_cursor_ce_transformer_2_attempt1",
+    "family": "transformer",
+    "method": "cursor_ce",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_mse_dlinear_0_attempt1",
+    "family": "dlinear",
+    "method": "mse",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_mse_lstm_0_attempt1",
+    "family": "lstm",
+    "method": "mse",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_mse_transformer_0_attempt1",
+    "family": "transformer",
+    "method": "mse",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_soft_regret_dlinear_0_attempt1",
+    "family": "dlinear",
+    "method": "soft_regret",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_soft_regret_dlinear_1_attempt1",
+    "family": "dlinear",
+    "method": "soft_regret",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_soft_regret_dlinear_2_attempt1",
+    "family": "dlinear",
+    "method": "soft_regret",
+    "initial_state_sha256": "39cbb0184b11444ed8e09517d08c08eb4af640e950517a93e69477180a8fc167"
+  },
+  {
+    "job": "search_soft_regret_lstm_0_attempt1",
+    "family": "lstm",
+    "method": "soft_regret",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_soft_regret_lstm_1_attempt1",
+    "family": "lstm",
+    "method": "soft_regret",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_soft_regret_lstm_2_attempt1",
+    "family": "lstm",
+    "method": "soft_regret",
+    "initial_state_sha256": "54cd8f7967d1d1266426ca30b2a43ff57e957f8da3daebe18e5ba32e340ab645"
+  },
+  {
+    "job": "search_soft_regret_transformer_0_attempt1",
+    "family": "transformer",
+    "method": "soft_regret",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_soft_regret_transformer_1_attempt1",
+    "family": "transformer",
+    "method": "soft_regret",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  },
+  {
+    "job": "search_soft_regret_transformer_2_attempt1",
+    "family": "transformer",
+    "method": "soft_regret",
+    "initial_state_sha256": "79f3735dd89b5d61224d14ef7a0732ccc7e25efa1ae032145586d7087ec80338"
+  }
+]

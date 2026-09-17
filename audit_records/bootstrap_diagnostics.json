@@ -1,0 +1,74 @@
+[
+  {
+    "version": "v1",
+    "metric": "mse",
+    "point": 0.3513864518304008,
+    "bootstrap_median": 0.31459728064941445,
+    "bootstrap_mean": 0.27569390156505885,
+    "fraction_below_point": 0.5929,
+    "sd": 0.18241347675327174
+  },
+  {
+    "version": "v1",
+    "metric": "cmse",
+    "point": 0.2518919545858135,
+    "bootstrap_median": 0.17816070613849583,
+    "bootstrap_mean": 0.16016904290452716,
+    "fraction_below_point": 0.7254,
+    "sd": 0.13727610584513159
+  },
+  {
+    "version": "v1",
+    "metric": "proxy",
+    "point": 0.31958490838584364,
+    "bootstrap_median": 0.20275841816169798,
+    "bootstrap_mean": 0.17980539822096844,
+    "fraction_below_point": 0.7501,
+    "sd": 0.1887834128630462
+  },
+  {
+    "version": "v1",
+    "metric": "T",
+    "point": 0.8493600056112346,
+    "bootstrap_median": 0.7706174243314003,
+    "bootstrap_mean": 0.7490068943480787,
+    "fraction_below_point": 0.8979,
+    "sd": 0.10075058904963752
+  },
+  {
+    "version": "v2",
+    "metric": "mse",
+    "point": 0.004953683091777667,
+    "bootstrap_median": -0.03194619608521437,
+    "bootstrap_mean": -0.036468274280963005,
+    "fraction_below_point": 0.5615,
+    "sd": 0.20142428953419977
+  },
+  {
+    "version": "v2",
+    "metric": "cmse",
+    "point": -0.10819817108124057,
+    "bootstrap_median": -0.1201255781756524,
+    "bootstrap_mean": -0.128190555087436,
+    "fraction_below_point": 0.5246,
+    "sd": 0.1835917336063089
+  },
+  {
+    "version": "v2",
+    "metric": "proxy",
+    "point": -0.16533442057147182,
+    "bootstrap_median": -0.2055494666062059,
+    "bootstrap_mean": -0.20309018745016302,
+    "fraction_below_point": 0.586,
+    "sd": 0.16824322800623406
+  },
+  {
+    "version": "v2",
+    "metric": "T",
+    "point": 0.7766565547232157,
+    "bootstrap_median": 0.6727997756703236,
+    "bootstrap_mean": 0.6330717088871214,
+    "fraction_below_point": 0.7988,
+    "sd": 0.1706184672841163
+  }
+]
