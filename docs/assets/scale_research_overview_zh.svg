@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="590" viewBox="0 0 1440 590" role="img" aria-labelledby="title desc">
+  <title id="title">SCALE：把预测目标对齐调度价值</title>
+  <desc id="desc">59 日历史探索性回测，日均调度评分提升 7.72%，累计评分达到同约束事后最优的 74.37%，62 组预测曲线独立重放核验。</desc>
+  <rect width="1440" height="590" rx="22" fill="#0c2338"/>
+  <path d="M1098 0H1440V271L1346 210 1278 235 1195 110Z" fill="#113249"/>
+  <path d="M1158 64L1228 91 1260 69 1310 156 1360 125 1422 145" fill="none" stroke="#2bc0b7" stroke-width="3" opacity=".5"/>
+  <g font-family="Microsoft YaHei, Noto Sans CJK SC, PingFang SC, sans-serif">
+    <text x="64" y="77" font-size="27" font-weight="700" letter-spacing="6" fill="#57d4ca">SCALE</text>
+    <text x="245" y="76" font-size="21" fill="#a8becd">电价预测 · 储能调度 · 决策导向学习</text>
+    <text x="60" y="171" font-size="60" font-weight="700" fill="#f5fafb">把预测目标对齐调度价值</text>
+    <text x="64" y="226" font-size="25" fill="#c8d8e2">从误差失配出发，连接窗口排序学习、预测集成与受约束优化。</text>
+    <line x1="64" y1="270" x2="1376" y2="270" stroke="#315066"/>
+    <text x="64" y="316" font-size="20" fill="#a8becd">已记录的研究证据</text>
+    <text x="64" y="394" font-size="61" font-weight="700" fill="#64e1d0">+7.72%</text>
+    <text x="64" y="435" font-size="23" fill="#f5fafb">日均原始调度评分提升</text>
+    <text x="64" y="470" font-size="19" fill="#a8becd">相对项目内 MSE Transformer 参考</text>
+    <line x1="495" y1="344" x2="495" y2="475" stroke="#315066"/>
+    <text x="540" y="394" font-size="61" font-weight="700" fill="#f5fafb">74.37%</text>
+    <text x="540" y="435" font-size="23" fill="#f5fafb">累计评分 / 同约束事后最优</text>
+    <text x="540" y="470" font-size="19" fill="#a8becd">59 日总实现分与总 oracle 分之比</text>
+    <line x1="973" y1="344" x2="973" y2="475" stroke="#315066"/>
+    <text x="1020" y="394" font-size="61" font-weight="700" fill="#f5fafb">62<tspan font-size="29" font-weight="400"> 组</tspan></text>
+    <text x="1020" y="435" font-size="23" fill="#f5fafb">预测曲线独立重放</text>
+    <text x="1020" y="470" font-size="19" fill="#a8becd">3,658 个日决策，动作零不一致</text>
+    <rect x="40" y="516" width="1360" height="48" rx="8" fill="#15354a"/>
+    <text x="64" y="547" font-size="19" fill="#c8d8e2">59 日历史探索性结果；评分非货币利润，增益集中于单日，条件区间跨零。完整边界见下文与报告。</text>
+  </g>
+</svg>

@@ -1,156 +1,115 @@
-# From Pointwise Forecast Error to Constrained Dispatch Value
+# 面向电力现货交易的电价预测与储能调度优化
 
-Reproduction package for a bilingual technical report on **what happens when a
-price forecast is judged by the scheduling decision it produces rather than by
-its own error.**
+宋玉凯 · 匹兹堡大学电气与计算机工程博士候选人 · 独立研究项目（2026.05–2026.09）
 
-*中文说明见 [README_ZH.md](README_ZH.md)。*
+[中文报告 · 已公开版](report/pdf/dispatch_value_report_zh.pdf)　/　[English](README_EN.md)　/　[方法与代码](#方法与代码)　/　[复现入口](#报告与复现)　/　[个人主页](https://ys3493-web.github.io/)
 
-📄 **Read the report:** [`report/pdf/dispatch_value_report_en.pdf`](report/pdf/dispatch_value_report_en.pdf) (18 pages) ·
-[`report/pdf/dispatch_value_report_zh.pdf`](report/pdf/dispatch_value_report_zh.pdf) (16 pages)
+![SCALE：把预测目标对齐调度价值。59 日历史探索性回测中，日均原始调度评分相对项目内 MSE Transformer 参考提升 7.72%，累计评分达到同约束事后最优的 74.37%；另对 62 组预测曲线开展独立重放核验。](docs/assets/scale_research_overview_zh.svg)
 
-## Method at a glance
+电价预测的价值，最终体现在它能否支持更好的充放电决策。本项目从“较低预测误差未必对应较高调度评分”的观测出发，分析可行动作如何决定预测中真正重要的价格对比，进而实现窗口排序学习、五种子预测集成与精确枚举调度。
 
-[![SCALE method overview: learn relative charging and discharging window values, average five forecasts, and select a feasible dispatch schedule.](docs/assets/scale_method_overview_20260917.png)](docs/assets/scale_method_overview_20260917.png)
+研究围绕一条可核查的主线展开：**发现评价失配 → 从约束结构解释 → 实现决策导向学习 → 按真实价格重放验证。**
 
-SCALE connects decision-oriented learning to constrained storage dispatch:
-learn relative window values → average forecasts → select a feasible schedule.
-Figure 1 from the revised report dated 17 September 2026; the bundled PDFs above
-are the earlier report edition. Click the figure to view it at full resolution.
+## 研究判断：预测误差与决策价值需要分别检验
 
----
+对同一 59 日、同一动作集合，项目中两条已保存的 Transformer 预测曲线呈现了一个反例：
 
-## The problem
+| 已保存的候选 | RMSE（越低越好） | 真实价格结算的日均调度评分（越高越好） |
+| :-- | --: | --: |
+| v1 contextual Transformer | 0.519558 | 5,637.17 |
+| v2 contextual Transformer | 0.682788 | 6,214.36 |
 
-A day is 96 fifteen-minute slots. A battery may charge at fixed power for eight
-consecutive slots, then discharge for eight, or stay idle — 3321 legal active
-schedules plus idle. A forecaster predicts the 96 prices; a solver picks one
-schedule from the forecast; the schedule is then settled against the prices that
-actually occurred.
+较低 RMSE 没有选出较高调度评分的候选。这里比较的是不同训练配方的历史记录，不是单因素控制实验。
 
-The project began by ranking forecasters on RMSE. Replaying the saved forecasts
-through the scheduler showed that **lower pointwise error did not reliably
-identify higher realized dispatch value.** The report works out why from the
-geometry of the feasible action set, reformulates the learning objective around
-the decision, implements a trainable surrogate, and evaluates the result under a
-protocol frozen before scoring.
+原因可以从约束解释：当前动作等量充放电，整体价格平移会改变 RMSE，却不改变充放电窗口价差；动作选择更直接地取决于合法窗口之间的相对价值。报告进一步从可行动作差方向给出决策遗憾上界，同时保留条件均值在理想总体 MSE 条件下的最优性边界。
 
-## What the evidence supports — and what it does not
+这使研究问题从“用哪个预测模型”，推进到“在有限数据与模型能力下，怎样训练和评价预测器，才能更贴近下游决策”。
 
-| Claim | Status |
-|---|---|
-| On the specified 59-day window the frozen protocol realized **6693.88** vs **6214.36** for the MSE-trained reference — an observed gain of **479.51 (7.72%)** | Settled fact, independently re-derived |
-| Point error does not reliably rank dispatch value across the saved candidates | Supported (v1 *r* = +0.351, v2 *r* = +0.005; day-centered variants likewise) |
-| Scale-free window-ranking consistency tracks realized value far better than point error | Supported as a **structural diagnostic** (*r* = +0.849 / +0.777), not as validated model-selection ability |
-| The actual training surrogate is a better cross-model selector | **Not supported** — its association is unstable (*r* = +0.320 / −0.165) and the report says so |
-| The gain transfers to a new period | **Not established.** 86.0% of the net gain falls on one day; the paired 7-day block interval is [−227.87, 1626.28]; the headline's worst single day (−5922.66) is deeper than the reference's (−2340.48) |
-| The loss function alone caused the gain | **Not established.** +160.99 / +318.52 is an arithmetic split, not a causal decomposition; a matched-initialization control of the *older* loss scores higher than the new one's single-seed mean |
-| A full battery model was validated | **No.** No SOC, efficiency, degradation or network constraint is implemented; results hold only on the 8+8 action contract |
+## SCALE：从学习目标到合法调度
 
-The 59-day evaluation window had already been inspected earlier in the project.
-It is described throughout as a *historically exposed evaluation period*, not a
-prospective confirmation set.
+SCALE（Storage-dispatch Curve Averaging and Listwise Estimation）是本项目已实现流程的简称：面向储能调度的窗口排序与集成预测。
 
-## Reproduce it
+[![SCALE 方法图：学习窗口价值、平均五个固定种子的预测，再精确枚举合法储能动作。](docs/assets/scale_method_overview_20260917.png)](docs/assets/scale_method_overview_20260917.png)
 
-Three entry points, in increasing depth.
+图 1｜与 2026 年 9 月 17 日中英文技术报告一致，点击可放大。
 
-### 1. Read it
+1. **学习窗口价值。** 由 96 点电价预测得到 89 个重叠八时段块和，构造 3,321 个充放电窗口价差；结合日中心块和回归与 listwise 软排序监督，使训练关注下游动作估值。
+2. **先平均预测，再作决策。** 五个固定种子（42–46）的 Transformer 输出先按价格曲线平均，再交给同一求解器，避免直接平均离散动作造成不合法计划。
+3. **由求解器保证简化约束。** 精确枚举 3,321 个非空闲方案及空闲动作；在离散任务单位下满足容量上限 8,000、先充后放和日末归零。真实评价价格只在动作锁定后用于结算。
 
-Open the PDFs in `report/pdf/`. No toolchain needed.
+方法把已有排序学习、曲线集成思想与本任务动作结构结合。这里的贡献是具体建模、实现与评价，不宣称提出新的通用损失理论或通用优化求解器。
 
-### 2. Rebuild every figure, table and PDF (≈2 minutes)
+## 结果：同一时期、同一约束、同一结算口径
+
+以下均为 2025 年 11–12 月的 59 日历史探索性回测。评价期曾在早期研究中被查看；最终集成的配方、种子与组合规则在集成评分前固定。
+
+| 方案 | 日均原始调度评分 | 累计评分 / 同约束事后最优评分 |
+| :-- | --: | --: |
+| 项目内 LightGBM 基线 | 5,786.10 | 64.28% |
+| 项目内 MSE Transformer 参考 | 6,214.36 | 69.04% |
+| SCALE：listwise Transformer 五种子曲线平均 | **6,693.88** | **74.37%** |
+| 预知真实价格的事后最优（oracle，仅作上界） | 9,000.89 | 100.00% |
+
+相对 MSE Transformer 参考，观测日均增量为 479.51（7.72%）。累计比值按“总实现分 / 总 oracle 分”计算，不是逐日比例的简单平均。
+
+> 结果边界：净增量的 86.0% 来自单日；配对七日块 95% 条件重采样区间为 [−227.87, 1,626.28]，跨过零。SCALE 的最差单日为 −5,922.66，参考为 −2,340.48。因此，当前证据支持本时段的观测改善，尚未证明跨时期稳定优势、尾部风险改善或损失函数的独立因果贡献。评分不是人民币或扣除成本后的交易净利润。
+
+数值入口：[聚合结果](report/shared/data/summary.json) · [逐曲线重放核验](audit_records/solver_replay.json) · [完整讨论与对照](report/pdf/dispatch_value_report_zh.pdf)
+
+## 方法与代码
+
+本项目独立完成问题分析、特征与模型实验、调度接口、结果复核及技术报告。下面按研究环节给出实现入口，便于直接核查。
+
+| 环节 | 实际工作 | 代码与证据 |
+| :-- | :-- | :-- |
+| 时序输入 | 以 67 维上下文特征预测次日 96 点实时电价；区分历史信息与预测边界输入 | [特征构建](src/phase_b/features.py) · [日期切分](src/phase_b/splits.py) |
+| 决策导向学习 | 日中心块和回归、窗口软排序；保留其他损失路线作比较 | [训练损失](experiments/holdout_dfl_ltr_v1/loss.py) |
+| 集成与动作接口 | 固定配方和五种子重拟合，平均价格曲线后求解 | [集成实验](experiments/holdout_seed_bag_v1/run.py) · [组合方式](experiments/holdout_seed_bag_v1/combine.py) |
+| 约束与精确求解 | 枚举合法动作，确定性处理近同分，检查动作结构 | [调度器](src/phase_b/dispatch.py) · [动作校验](src/phase_b/contracts.py) |
+| 可核查评价 | 独立重放 62 组预测曲线 × 59 日，核对动作与真实价格结算；分析极端日与区块重采样 | [独立核验脚本](tools/independent_audit.py) · [历史审计记录](AUDIT.md) |
+
+已有重放记录中，62 组曲线共 3,658 个日决策的动作零不一致，结算数值差异不超过 1.5 × 10⁻¹¹。这里核验的是实现与记录的一致性，不是对未来收益的保证。
+
+## 面向实际电力场景的后续验证
+
+这项研究形成了从预测、约束求解到实际结算的评价接口，可作为进一步研究电力交易辅助决策的起点。下一步需要将验证扩展到：
+
+- 信息可用性：核实各输入在决策时刻的实际发布时间，在未参与开发的滚动时段评价固定方案。
+- 设备与市场约束：加入充放电效率、衰减成本、真实功率及结算规则，重新定义可行集与收益。
+- 风险目标：根据业务需求加入下行或尾部风险约束，并与风险中性目标作配对比较。
+
+以上为后续研究方向。当前成果是公开数据上的离线研究原型，尚无生产部署、真实交易收益或电网运行成效的验证。
+
+## 报告与复现
+
+本页的方法示意与约束解释已按 2026 年 9 月 17 日修订稿对齐。目前仓库可下载的 PDF 为此前发布的复现快照（中文 16 页、英文 18 页）；其中关于简化容量约束和数据来源的表述，请结合下方版本说明阅读。
+
+| 阅读与使用 | 入口 |
+| :-- | :-- |
+| 已公开报告存档 | [中文报告](report/pdf/dispatch_value_report_zh.pdf) · [English report](report/pdf/dispatch_value_report_en.pdf) |
+| 本地核查与重建 | [图表与报告构建](tools/build_report.py) · [数值核查](tools/check_numbers.py) |
+| 获取数据与重跑实验 | [数据说明](DATA.md) · [依赖](requirements-full.txt) |
+
+版本说明：本页所用的 8+8 动作集合隐式满足离散容量上限和日末归零；按修订稿引用的赛题描述，数据来自蒙西地区某匿名节点。旧报告与历史审计中较笼统的“未实施容量约束”“未认定市场来源”表述，应结合这两点澄清阅读。
+
+<details>
+<summary>展开：已公开报告快照的复现入口</summary>
 
 ```bash
 pip install -r requirements.txt -r requirements-audit.txt
-python tools/build_report.py          # 6 figures, 7 tables, both PDFs -> build/
-python tools/verify_reproduction.py   # byte-compare against the committed artifacts
-python tools/check_numbers.py         # every number traces to report/shared/data
+python tools/check_numbers.py
+python tools/build_report.py
+python tools/verify_reproduction.py
 ```
 
-`tools/build_report.py` reads only the aggregated evidence records in
-`report/shared/data/`. It fits no model and reads no source data. A LaTeX engine
-is required — [Tectonic](https://tectonic-typesetting.github.io) is detected
-first, otherwise `latexmk` + `xelatex`.
+构建需 Tectonic 或 XeLaTeX / latexmk。上述命令对应仓库内较早的报告快照，并不重建 9 月 17 日修订稿。原始曲线的独立调度重放还需按 [DATA.md](DATA.md) 准备数据及实验产物；仅克隆仓库不能完成该步骤。
 
-For byte-identical figure output install `requirements.lock.txt` instead;
-different matplotlib versions reproduce the same numbers but may emit
-cosmetically different PDF bytes.
+</details>
 
-`tools/make_overleaf_zip.py` packages each edition for upload to Overleaf.
+原始数据通过公开渠道获取，具体来源与使用条件见数据说明；本仓库不再分发原始价格、预测曲线或模型权重。已公开报告与构建工具保留用于追溯；修订稿的完整 PDF 与源码包尚未在此发布。
 
-### 3. Re-derive everything from the source data
+---
 
-The dataset is **not distributed here** — see [DATA.md](DATA.md) for where to
-obtain it, where to place it, and the exact order in which to run the eight
-experiment directories. Once you have regenerated `reports/`:
+作者：[宋玉凯（Yukai Song）](https://ys3493-web.github.io/) · 研究方向：可信与高效机器学习、预测与优化决策、智能感知。
 
-```bash
-python report/shared/derive_records.py --repo-root . --out report/shared/data
-python tools/independent_audit.py     # re-solves all 62 curves without the report code
-```
-
-`tools/independent_audit.py` rebuilds the block sums with `np.convolve`,
-re-solves every saved day through `src/phase_b/dispatch.py`, and compares against
-the packaged records. Run against the original artifacts it reports zero action
-mismatches across 62 curves × 59 days and agreement to 1.5 × 10⁻¹¹.
-
-## Layout
-
-```
-report/shared/          single source of truth
-  data/                 16 aggregated evidence records (no price curves)
-  figures/              6 vector figures + PNG previews
-  tables/               7 generated LaTeX tables
-  equations.tex         all 19 numbered equations, shared by both editions
-  derive_records.py     rebuilds data/ from reports/ (needs your own data)
-  build_figures.py      draws figures/ from data/ alone
-  build_tables.py       generates tables/ from data/ alone
-report/{zh,en}/         main.tex + author.tex per edition
-report/pdf/             the two compiled PDFs
-src/phase_b/            the dispatch solver, action contract and feature pipeline
-experiments/            the eight experiment directories (code only)
-notebooks/              notebooks 11–14, read-only research record with outputs
-tools/                  build, verify and audit entry points
-audit_records/          two independent review rounds and their machine-readable output
-configs/phase_b.toml    paths and split definition
-```
-
-`src/phase_b/dispatch.py` is the authority on the task: `optimize_day` enumerates
-the 3321 legal windows, picks the argmax under a deterministic tie rule, and
-`contracts.py` validates that a day's power vector is legal.
-
-## Verification status
-
-Everything below was checked locally, with a LaTeX engine and the pinned
-package versions:
-
-- both editions recompile from a clean checkout; page counts (16 / 18) and
-  per-page extracted text match the shipped PDFs
-- all six figure PDFs redraw with identical SHA-256
-- all fourteen table files regenerate identically
-- the Chinese and English editions carry the same 96 decimal values, so no claim
-  is qualified in one language only
-- every decimal in the text resolves to a value in `report/shared/data/`
-
-**The packages were not tested on Overleaf online.** `overleaf_online_tested` is
-`false` in the build metadata, and the ZIPs target ordinary XeLaTeX on TeX Live.
-
-## Provenance and limits
-
-The target is an anonymized price series. The referenced literature provides
-methodological background; it is not evidence that the data come from any
-particular electricity market, and the report does not claim a market identity,
-authoritative physical units, or any production deployment. Scores are reported
-in the original scoring units — they are not currency and not net trading profit.
-
-The report and the audit scripts were prepared with AI assistance from the
-project's recorded experiments; every quantitative claim is traceable to the
-records in `report/shared/data/` and the two review rounds in `audit_records/`.
-See [AUDIT.md](AUDIT.md) for what those reviews found, including a sign error in
-an arithmetic sentence that the second round caught and fixed.
-
-## Licence
-
-Code and documentation: MIT, see [LICENSE](LICENSE).
-Data records and dataset attribution: see [NOTICE.md](NOTICE.md).
+代码与文档采用 [MIT 许可](LICENSE)。报告、构建与核验文档使用了 AI 辅助；数据来源、权利及辅助工具说明见 [NOTICE.md](NOTICE.md)。
